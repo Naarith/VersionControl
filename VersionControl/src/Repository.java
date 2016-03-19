@@ -6,5 +6,6 @@ public class Repository
 		
 		System.out.println(test) ; 
 		System.out.println("Trying to make another branch!");
+		System.out.println("Testing my branch");
 	} // end of main 
 } // end of Repository Project
