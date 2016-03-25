@@ -13,67 +13,77 @@ public class Repository
 {
 	public static void main(String[] args)
 	{
-		Repository repo = new Repository();	
+		Repository repo = new Repository(get_source());	
 		repo.create_repo();
 	} // end of main
 	
 	
 	//class variables
-	private Scanner in;
-	private PrintWriter out;
-	private File source;
-	
-	public Repository(){
-		in = new Scanner(System.in);
-	}
+	Scanner in = new Scanner(System.in);
+	PrintWriter out; 
+	private File src_file, tgt_file ; 
 	
 	/**
-	 * */
+	 * Initializes the source file for the repository 
+	 * @param s source file path for repository 
+	 */
+	public Repository(String s)
+	{
+		src_file = new File(s) ; 
+	} // end of Repository constructor 
+	
+	/**
+	 * Creates a repository for a new or existing file
+	 */
 	public void create_repo(){
-		File source = get_source();
-		File target = get_target();
+//		File source = get_source();
+		tgt_file = get_target();
 		
-		boolean created = target.mkdir();
+		boolean created = tgt_file.mkdir();
 		if(created) 
 			System.out.println("Repository created.");
-		else if(target.isDirectory())
+		else if(tgt_file.isDirectory())
 			System.out.println("Folder already exists");
 		else 
 			System.out.println("Repository was not created.");
 		
-		copy_source(source, target);
+//		copy_source(source, target);
+		copy_source(src_file, tgt_file) ; 
 	}
 	
 	/**
-	 * 
-	 * @return source_file that contains file path of the source file
+	 * Gets the file path from the source file 
+	 * @return source file path 
 	 */
-	public File get_source(){
+	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
-		String source = "/Users/narithchoeun/Desktop/source"; //mac
+//		String source = "/Users/narithchoeun/Desktop/source"; //mac
 //		String source = "E:\\Desktop\\source";
-		File source_file = new File(source);
-		return source_file;
+		String source = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer
+		return source;
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Getting the target folder specified by the user 
+	 * @return target file 
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
 //		String pathname = in.nextLine();
-		String pathname = "/Users/narithchoeun/Desktop"; //mac
+//		String pathname = "/Users/narithchoeun/Desktop"; //mac
 //		String pathname = "E:\\Desktop\\"; //windows
-//		pathname += "\\repo343";
-		pathname += "/repo343";
+		String pathname = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer 
+		pathname += "\\repo343";
+//		pathname += "/repo343";
 		File target_dir = new File(pathname);
 		return target_dir;
-	}
+	} // end of get_target method 
 	
 	/**
-	 * 
+	 * Copying the source file(s) into a specified target 
+	 * @param source File to be copied 
+	 * @param target File copied from source 
 	 */
 	public void copy_source(File source, File target){
 		System.out.println("Source file: " + source.getPath() + " is being copied.");
@@ -99,11 +109,33 @@ public class Repository
 				
 				while(in.hasNextLine()){
 					out.println(in.nextLine());
-				}
+				} // end of while loop 
 				
 				out.flush();
 				in.close();
-			} catch (IOException e) { e.printStackTrace(); } 
-		}
-	}	
+			} catch (IOException e) { e.printStackTrace(); } // end of try catch block
+		} // end of for each loop 
+	} // end of copy_source method 
+	
+	/**
+	 * Creates the manifest folder for the repository 
+	 * @param source File that was made into a repository
+	 */
+	public void create_manifest()
+	{
+		String path = tgt_file.getPath() + "\\manifest" ; 
+		File manifest = new File(path) ; 
+		
+		manifest.mkdir() ; 
+	} // end of create_manifest method 
+	
+	/**
+	 * Updates the manifest folder with files 
+	 * that have been changed in the repository 
+	 */
+	public void update_manifest()
+	{
+		
+	} // end of update_manifest method 
+	
 } // end of Repository Project
