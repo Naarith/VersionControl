@@ -39,7 +39,9 @@ public class Repository
 	}
 	
 	/**
-	 * */
+	 * 
+	 * @return source_file that contains file path of the source file
+	 */
 	public File get_source(){
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
