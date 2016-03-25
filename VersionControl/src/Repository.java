@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.io.*;
+
 /**
  * ask the user to input a source they would like to create a repository for
  * select a destination to store that repository
@@ -14,22 +15,20 @@ public class Repository
 	{
 		Repository repo = new Repository();
 		
-		repo.get_source();
-		repo.get_target();
-//		File source = repo.get_source();
-//		File target = repo.get_target();
-//		System.out.println(target.toString());
-//		boolean yes = target.mkdir();
-//		if (yes)
-//			System.out.println("created");
+		
+		repo.copy_source(repo.get_source());
+//		repo.create_repo(repo.get_target());
 		
 	} // end of main
 	
 	
 	
-	public File create_repo(){
-		File repo = new File("");
-		return repo;
+	public void create_repo(File t){
+		boolean created = t.mkdir();
+		if(created) 
+			System.out.println("Repository created.");
+		else 
+			System.out.println("Repository was not created.");
 	}
 	
 	public File get_source(){
@@ -40,6 +39,20 @@ public class Repository
 		return source_file;
 	}
 	
+	public void copy_source(File source){
+		System.out.println("Source file: " + source.getPath() + " is being copied.");
+		
+		for(File select_file : source.listFiles()){
+			
+//			in = new Scanner(select_file);
+			System.out.println(select_file);
+			
+//			while(in.hasNextLine()){
+//				
+//			}
+		}
+	}
+	
 	/*ask the user to select a target folder*/
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
@@ -47,12 +60,7 @@ public class Repository
 		String pathname = "/Users/narithchoeun/Desktop";
 		pathname += "/repo343/";
 		File target_file = new File(pathname);
-		boolean yes = target_file.mkdir();
-		if (yes)
-			System.out.println("created");	
-		else
-			System.out.println("failed");
 		return target_file;
-		
 	}
+	
 } // end of Repository Project
