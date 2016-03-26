@@ -139,7 +139,10 @@ public class Repository
 		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
 		try{
 			out = new PrintWriter(man_line);
-			out.println(time);
+			out.println("Manifest-Version 1.0\n" + "Created on: " + time);
+			for(File select_file : src_file.listFiles()){
+				out.println(src_file.getPath()+"/"+select_file.getName());
+			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
 	} // end of create_manifest method 
@@ -150,7 +153,7 @@ public class Repository
 	 */
 	public String get_timestamp(){
 		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-h.mm.ss a");
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy h.mm.ss a");
 		String formattedDate = sdf.format(date);
 		return formattedDate;
 	}
