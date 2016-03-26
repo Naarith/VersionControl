@@ -1,7 +1,6 @@
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
-//import java.Time;
 import java.io.*;
 
 /**
@@ -18,6 +17,8 @@ public class Repository
 	{
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
+//		File f = new File("/Users/narithchoeun/Desktop/source/file.txt");
+//		System.out.println(repo.checksum(f));
 	} // end of main
 	
 	
@@ -33,7 +34,6 @@ public class Repository
 	public Repository(String s)
 	{
 		src_file = new File(s) ; 
-		create_manifest() ; 
 	} // end of Repository constructor 
 	
 	/**
@@ -95,19 +95,22 @@ public class Repository
 		ptree_dir.mkdir();
 		
 		
-		
 		/* iterates through the files in the source folder and copies files into target folder */
 		for(File select_file : source.listFiles()){
 			try {
 				in = new Scanner(select_file); //read the file
+				
 				//file path to create directories that contains the source file's artifacts
 //				File temp_dir = new File("\\"+ptree_dir.getPath()+"\\"+select_file.getName());
 				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());
 				temp_dir.mkdir();
 				
-				//write into the created directory with actual file
+				//write into the created directory with an artifact of the file
 //				File write_file = new File("\\"+temp_dir.getPath()+"\\"+select_file.getName());
-				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
+//				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
+				int chksum = checksum(select_file);
+//				File write_file = new File("/"+temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file));
+				File write_file = new File("/"+temp_dir.getPath()+"/"+chksum+get_extension(select_file));
 				out = new PrintWriter(write_file);
 				
 				while(in.hasNextLine()){
@@ -132,13 +135,13 @@ public class Repository
 		
 		manifest.mkdir() ; 
 		String time = get_timestamp();
+		
 		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
 		try{
 			out = new PrintWriter(man_line);
 			out.println(time);
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
-//		System.out.println(man_line.getPath());
 	} // end of create_manifest method 
 	
 	/**
@@ -161,24 +164,25 @@ public class Repository
 	{
 		int checksum = 0, c ; 
 		FileReader fr = null ; 
+		Scanner tmpin = null ;
 		
 		try{
 			fr = new FileReader(f.getPath()) ; 
-			in = new Scanner(f.getPath()) ; 
+			tmpin = new Scanner(f.getPath()) ; 
 			
 			// reads file character by character 
 			while((c = fr.read()) != -1)
 				checksum += c ; 
 			
-			in.close();
+			tmpin.close();
 			fr.close();
 		}catch(FileNotFoundException e)
 		{
 			System.err.println("File not found");
 		}catch(IOException e){}
 		finally{
-			if(in != null)
-				in.close();
+			if(tmpin != null)
+				tmpin.close();
 			if(fr != null)
 				try {
 					fr.close();
@@ -189,4 +193,15 @@ public class Repository
 		return checksum ; 
 	} // end of checksum method 
 	
+	
+	/**
+	 * Gets the extension for a file by parsing the filename at the last period
+	 * @return A file extension string
+	 */
+	public String get_extension(File f){
+		String filename = f.getName();
+		int i = filename.lastIndexOf(".");
+		String ext = filename.substring(i);
+		return ext;
+	}
 } // end of Repository Project
