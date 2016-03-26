@@ -33,6 +33,7 @@ public class Repository
 	public Repository(String s)
 	{
 		src_file = new File(s) ; 
+		create_manifest() ; 
 	} // end of Repository constructor 
 	
 	/**
@@ -48,7 +49,7 @@ public class Repository
 			System.out.println("Folder already exists");
 		else 
 			System.out.println("Repository was not created.");
-		
+
 		create_manifest();
 		copy_source(src_file, tgt_file) ;
 	}
@@ -75,7 +76,7 @@ public class Repository
 //		String pathname = in.nextLine();
 		String pathname = "/Users/narithchoeun/Desktop"; //mac
 //		String pathname = "E:\\Desktop\\"; //windows
-//		String pathname = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer 
+//		String pathname = "\\Users\\Alan\\Desktop\\" ; // Alan's computer 
 //		pathname += "\\repo343";
 		pathname += "/repo343";//mac
 		File target_dir = new File(pathname);
@@ -140,6 +141,10 @@ public class Repository
 //		System.out.println(man_line.getPath());
 	} // end of create_manifest method 
 	
+	/**
+	 * 
+	 * @return A string of the current date and time
+	 */
 	public String get_timestamp(){
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-h.mm.ss a");
@@ -148,12 +153,40 @@ public class Repository
 	}
 	
 	/**
-	 * Updates the manifest folder with files 
-	 * that have been changed in the repository 
+	 * Calculates the checksum of the file
+	 * @param f File to be read
+	 * @return Checksum of file 
 	 */
-	public void update_manifest()
+	public int checksum(File f)
 	{
+		int checksum = 0, c ; 
+		FileReader fr = null ; 
 		
-	} // end of update_manifest method 
+		try{
+			fr = new FileReader(f.getPath()) ; 
+			in = new Scanner(f.getPath()) ; 
+			
+			// reads file character by character 
+			while((c = fr.read()) != -1)
+				checksum += c ; 
+			
+			in.close();
+			fr.close();
+		}catch(FileNotFoundException e)
+		{
+			System.err.println("File not found");
+		}catch(IOException e){}
+		finally{
+			if(in != null)
+				in.close();
+			if(fr != null)
+				try {
+					fr.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} // end of try catch block
+		} // end of try catch finally block
+		return checksum ; 
+	} // end of checksum method 
 	
 } // end of Repository Project
