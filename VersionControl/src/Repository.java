@@ -17,8 +17,6 @@ public class Repository
 	{
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
-//		File f = new File("/Users/narithchoeun/Desktop/source/file.txt");
-//		System.out.println(repo.checksum(f));
 	} // end of main
 	
 	
@@ -102,17 +100,15 @@ public class Repository
 				
 				//file path to create directories that contains the source file's artifacts
 //				File temp_dir = new File("\\"+ptree_dir.getPath()+"\\"+select_file.getName());
-				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());
+				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());//mac
 				temp_dir.mkdir();
 				
 				//write into the created directory with an artifact of the file
 //				File write_file = new File("\\"+temp_dir.getPath()+"\\"+select_file.getName());
-//				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
-				int chksum = checksum(select_file);
-//				File write_file = new File("/"+temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file));
-				File write_file = new File("/"+temp_dir.getPath()+"/"+chksum+get_extension(select_file));
+				File write_file = new File("/"+temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file));//mac
 				out = new PrintWriter(write_file);
 				
+				//reads src file and copies content into artifact file
 				while(in.hasNextLine()){
 					out.println(in.nextLine());
 				} // end of while loop 
@@ -136,6 +132,7 @@ public class Repository
 		manifest.mkdir() ; 
 		String time = get_timestamp();
 		
+		//creates man line file with check in timestamp and the project hierarchy
 		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
 		try{
 			out = new PrintWriter(man_line);
@@ -148,7 +145,7 @@ public class Repository
 	} // end of create_manifest method 
 	
 	/**
-	 * 
+	 * Get the current date and time
 	 * @return A string of the current date and time
 	 */
 	public String get_timestamp(){
