@@ -1,4 +1,7 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+//import java.Time;
 import java.io.*;
 
 /**
@@ -36,7 +39,6 @@ public class Repository
 	 * Creates a repository for a new or existing file
 	 */
 	public void create_repo(){
-//		File source = get_source();
 		tgt_file = get_target();
 		
 		boolean created = tgt_file.mkdir();
@@ -47,8 +49,8 @@ public class Repository
 		else 
 			System.out.println("Repository was not created.");
 		
-//		copy_source(source, target);
-		copy_source(src_file, tgt_file) ; 
+		create_manifest();
+		copy_source(src_file, tgt_file) ;
 	}
 	
 	/**
@@ -58,9 +60,9 @@ public class Repository
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
-//		String source = "/Users/narithchoeun/Desktop/source"; //mac
+		String source = "/Users/narithchoeun/Desktop/source"; //mac
 //		String source = "E:\\Desktop\\source";
-		String source = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer
+//		String source = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer
 		return source;
 	}
 	
@@ -71,11 +73,11 @@ public class Repository
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
 //		String pathname = in.nextLine();
-//		String pathname = "/Users/narithchoeun/Desktop"; //mac
+		String pathname = "/Users/narithchoeun/Desktop"; //mac
 //		String pathname = "E:\\Desktop\\"; //windows
-		String pathname = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer 
-		pathname += "\\repo343";
-//		pathname += "/repo343";
+//		String pathname = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer 
+//		pathname += "\\repo343";
+		pathname += "/repo343";//mac
 		File target_dir = new File(pathname);
 		return target_dir;
 	} // end of get_target method 
@@ -88,7 +90,7 @@ public class Repository
 	public void copy_source(File source, File target){
 		System.out.println("Source file: " + source.getPath() + " is being copied.");
 		//creates project tree folder
-		File ptree_dir = new File(target+source.getName());
+		File ptree_dir = new File(target+"/"+source.getName());
 		ptree_dir.mkdir();
 		
 		
@@ -123,11 +125,27 @@ public class Repository
 	 */
 	public void create_manifest()
 	{
-		String path = tgt_file.getPath() + "\\manifest" ; 
+//		String path = tgt_file.getPath() + "\\manifest" ;
+		String path = tgt_file.getPath() + "/manifest"; //mac
 		File manifest = new File(path) ; 
 		
 		manifest.mkdir() ; 
+		String time = get_timestamp();
+		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
+		try{
+			out = new PrintWriter(man_line);
+			out.println(time);
+			out.flush();
+		} catch (IOException e) { e.printStackTrace(); }
+//		System.out.println(man_line.getPath());
 	} // end of create_manifest method 
+	
+	public String get_timestamp(){
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-h.mm.ss a");
+		String formattedDate = sdf.format(date);
+		return formattedDate;
+	}
 	
 	/**
 	 * Updates the manifest folder with files 
