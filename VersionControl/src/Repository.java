@@ -109,7 +109,7 @@ public class Repository
 				//write into the created directory with an artifact of the file
 //				File write_file = new File("\\"+temp_dir.getPath()+"\\"+select_file.getName());
 //				File write_file = new File("/"+temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file));//mac
-				File write_file = new File(temp_dir.getPath()+"/"+select_file.getName()) ;
+				File write_file = new File(temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ;
 				out = new PrintWriter(write_file);
 				
 				//reads src file and copies content into artifact file
@@ -143,9 +143,10 @@ public class Repository
 		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; // Alan's comp
 		try{
 			out = new PrintWriter(man_line);
-			out.println("Manifest-Version 1.0\n" + "Created on: " + time);
+			out.println("Manifest-Version 1.0 \n" + "Created on: " + time);
 			for(File select_file : src_file.listFiles()){
-				out.println(src_file.getPath()+"/"+select_file.getName());
+//				out.println(src_file.getPath()+"/"+select_file.getName()); //mac
+				out.println(src_file.getPath()+"\\"+select_file.getName()); // Alan's comp
 			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
@@ -197,7 +198,7 @@ public class Repository
 					e.printStackTrace();
 				} // end of try catch block
 		} // end of try catch finally block
-		return checksum ; 
+		return checksum%256 ; 
 	} // end of checksum method 
 	
 	
