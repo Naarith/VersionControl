@@ -137,7 +137,8 @@ public class Repository
 		
 		manifest.mkdir() ; 
 		String time = get_timestamp();
-		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
+//		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
+		File man_line = new File(manifest.getPath() + "/" + time + ".txt") ; // Alan's comp
 		try{
 			out = new PrintWriter(man_line);
 			out.println(time);
