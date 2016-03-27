@@ -33,7 +33,6 @@ public class Repository
 	public Repository(String s)
 	{
 		src_file = new File(s) ; 
-		create_manifest() ; 
 	} // end of Repository constructor 
 	
 	/**
@@ -49,9 +48,15 @@ public class Repository
 			System.out.println("Folder already exists");
 		else 
 			System.out.println("Repository was not created.");
+<<<<<<< HEAD
 
 		create_manifest();
 		copy_source(src_file, tgt_file) ;
+=======
+		
+		create_manifest() ; 
+		copy_source(src_file, tgt_file) ; 
+>>>>>>> checksum_am
 	}
 	
 	/**
@@ -63,7 +68,11 @@ public class Repository
 //		String source = in.nextLine();
 		String source = "/Users/narithchoeun/Desktop/source"; //mac
 //		String source = "E:\\Desktop\\source";
+<<<<<<< HEAD
 //		String source = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer
+=======
+		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
+>>>>>>> checksum_am
 		return source;
 	}
 	
@@ -76,9 +85,14 @@ public class Repository
 //		String pathname = in.nextLine();
 		String pathname = "/Users/narithchoeun/Desktop"; //mac
 //		String pathname = "E:\\Desktop\\"; //windows
+<<<<<<< HEAD
 //		String pathname = "\\Users\\Alan\\Desktop\\" ; // Alan's computer 
 //		pathname += "\\repo343";
 		pathname += "/repo343";//mac
+=======
+		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
+		pathname += "/repo343";
+>>>>>>> checksum_am
 		File target_dir = new File(pathname);
 		return target_dir;
 	} // end of get_target method 
@@ -102,12 +116,14 @@ public class Repository
 				in = new Scanner(select_file); //read the file
 				//file path to create directories that contains the source file's artifacts
 //				File temp_dir = new File("\\"+ptree_dir.getPath()+"\\"+select_file.getName());
-				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());
+//				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());
+				File temp_dir = new File(ptree_dir.getPath()+"/"+select_file.getName()) ; 
 				temp_dir.mkdir();
 				
 				//write into the created directory with actual file
 //				File write_file = new File("\\"+temp_dir.getPath()+"\\"+select_file.getName());
-				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
+//				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
+				File write_file = new File(temp_dir.getPath()+"/"+select_file.getName()) ;
 				out = new PrintWriter(write_file);
 				
 				while(in.hasNextLine()){
@@ -126,8 +142,12 @@ public class Repository
 	 */
 	public void create_manifest()
 	{
+<<<<<<< HEAD
 //		String path = tgt_file.getPath() + "\\manifest" ;
 		String path = tgt_file.getPath() + "/manifest"; //mac
+=======
+		String path = tgt_file.getPath() + "/manifest" ; 
+>>>>>>> checksum_am
 		File manifest = new File(path) ; 
 		
 		manifest.mkdir() ; 
