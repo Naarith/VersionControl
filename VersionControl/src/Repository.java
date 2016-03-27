@@ -1,4 +1,7 @@
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+//import java.Time;
 import java.io.*;
 
 /**
@@ -6,7 +9,8 @@ import java.io.*;
  * select a destination to store that repository
  * in the repository create a manifest folder and folders for each file in the source
  * the manifest contains the 'commits' meaning that it contains the different files and the changes to the repository
- * the file folders will contain different versions of the file if any changes were 'committed' */
+ * the file folders will contain different versions(artifacts) of the file if any changes were 'committed' 
+ */
 
 public class Repository 
 {
@@ -44,9 +48,15 @@ public class Repository
 			System.out.println("Folder already exists");
 		else 
 			System.out.println("Repository was not created.");
+<<<<<<< HEAD
+
+		create_manifest();
+		copy_source(src_file, tgt_file) ;
+=======
 		
 		create_manifest() ; 
 		copy_source(src_file, tgt_file) ; 
+>>>>>>> checksum_am
 	}
 	
 	/**
@@ -56,9 +66,13 @@ public class Repository
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
-//		String source = "/Users/narithchoeun/Desktop/source"; //mac
+		String source = "/Users/narithchoeun/Desktop/source"; //mac
 //		String source = "E:\\Desktop\\source";
+<<<<<<< HEAD
+//		String source = "\\Users\\Alan\\Desktop\\source" ; // Alan's computer
+=======
 		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
+>>>>>>> checksum_am
 		return source;
 	}
 	
@@ -69,10 +83,16 @@ public class Repository
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
 //		String pathname = in.nextLine();
-//		String pathname = "/Users/narithchoeun/Desktop"; //mac
+		String pathname = "/Users/narithchoeun/Desktop"; //mac
 //		String pathname = "E:\\Desktop\\"; //windows
+<<<<<<< HEAD
+//		String pathname = "\\Users\\Alan\\Desktop\\" ; // Alan's computer 
+//		pathname += "\\repo343";
+		pathname += "/repo343";//mac
+=======
 		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
 		pathname += "/repo343";
+>>>>>>> checksum_am
 		File target_dir = new File(pathname);
 		return target_dir;
 	} // end of get_target method 
@@ -85,14 +105,16 @@ public class Repository
 	public void copy_source(File source, File target){
 		System.out.println("Source file: " + source.getPath() + " is being copied.");
 		//creates project tree folder
-		File ptree_dir = new File(target+"/ptree");
+		File ptree_dir = new File(target+"/"+source.getName());
 		ptree_dir.mkdir();
+		
+		
 		
 		/* iterates through the files in the source folder and copies files into target folder */
 		for(File select_file : source.listFiles()){
 			try {
 				in = new Scanner(select_file); //read the file
-				//get file path to create directories for the source files that contains the file's artifacts
+				//file path to create directories that contains the source file's artifacts
 //				File temp_dir = new File("\\"+ptree_dir.getPath()+"\\"+select_file.getName());
 //				File temp_dir = new File("/"+ptree_dir.getPath()+"/"+select_file.getName());
 				File temp_dir = new File(ptree_dir.getPath()+"/"+select_file.getName()) ; 
@@ -103,6 +125,7 @@ public class Repository
 //				File write_file = new File("/"+temp_dir.getPath()+"/"+select_file.getName());
 				File write_file = new File(temp_dir.getPath()+"/"+select_file.getName()) ;
 				out = new PrintWriter(write_file);
+				
 				while(in.hasNextLine()){
 					out.println(in.nextLine());
 				} // end of while loop 
@@ -119,11 +142,35 @@ public class Repository
 	 */
 	public void create_manifest()
 	{
+<<<<<<< HEAD
+//		String path = tgt_file.getPath() + "\\manifest" ;
+		String path = tgt_file.getPath() + "/manifest"; //mac
+=======
 		String path = tgt_file.getPath() + "/manifest" ; 
+>>>>>>> checksum_am
 		File manifest = new File(path) ; 
 		
 		manifest.mkdir() ; 
+		String time = get_timestamp();
+		File man_line = new File("/"+manifest.getPath()+"/"+time+".txt");
+		try{
+			out = new PrintWriter(man_line);
+			out.println(time);
+			out.flush();
+		} catch (IOException e) { e.printStackTrace(); }
+//		System.out.println(man_line.getPath());
 	} // end of create_manifest method 
+	
+	/**
+	 * 
+	 * @return A string of the current date and time
+	 */
+	public String get_timestamp(){
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy-h.mm.ss a");
+		String formattedDate = sdf.format(date);
+		return formattedDate;
+	}
 	
 	/**
 	 * Calculates the checksum of the file
