@@ -15,8 +15,7 @@ public class Repository
 {
 	public static void main(String[] args)
 	{
-		Repository repo = new Repository(args[0]);	
-		repo.set_target(args[1]);
+		Repository repo = new Repository(get_source());	
 		repo.create_repo();
 	} // end of main
 	
@@ -39,6 +38,8 @@ public class Repository
 	 * Creates a repository for a new or existing file
 	 */
 	public void create_repo(){
+		tgt_file = get_target();
+		
 		boolean created = tgt_file.mkdir();
 		if(created) 
 			System.out.println("Repository created.");
@@ -52,12 +53,32 @@ public class Repository
 	}
 	
 	/**
-	 * Sets target folder based on user argument
+	 * Gets the file path from the source file 
+	 * @return source file path 
 	 */
-	public void set_target(String s){
-		tgt_file = new File(s+"/repo343");
+	public static String get_source(){
+		System.out.println("Select the pathname for a source folder");
+//		String source = in.nextLine();
+		String source = "/Users/narithchoeun/Desktop/source"; //mac
+//		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
+		return source;
 	}
-
+	
+	/**
+	 * Getting the target folder specified by the user 
+	 * @return target file 
+	 */
+	public File get_target(){
+		System.out.println("Select the pathname a target folder");
+//		String pathname = in.nextLine();
+		String pathname = "/Users/narithchoeun/Desktop"; //mac
+//		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
+		pathname += "/repo343";//mac
+		
+		File target_dir = new File(pathname);
+		return target_dir;
+	} // end of get_target method
+	
 	/**
 	 * Copying the source file(s) into a specified target 
 	 * @param source File to be copied 
