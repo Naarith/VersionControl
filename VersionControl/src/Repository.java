@@ -59,8 +59,8 @@ public class Repository
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
-		String source = "/Users/narithchoeun/Desktop/source"; //mac
-//		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
+//		String source = "/Users/narithchoeun/Desktop/source"; //mac
+		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
 		return source;
 	}
 	
@@ -71,8 +71,8 @@ public class Repository
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
 //		String pathname = in.nextLine();
-		String pathname = "/Users/narithchoeun/Desktop"; //mac
-//		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
+//		String pathname = "/Users/narithchoeun/Desktop"; //mac
+		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
 		pathname += "/repo343";//mac
 		
 		File target_dir = new File(pathname);
@@ -132,9 +132,11 @@ public class Repository
 		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; // Alan's comp
 		try{
 			out = new PrintWriter(man_line);
-			out.println("Manifest-Version 1.0 \n" + "Created on: " + time);
+			out.println("Manifest-Version 1.0");
+			out.println("Created on: " + time) ; 
 			for(File select_file : src_file.listFiles()){
-				out.println(src_file.getPath()+"/"+checksum(select_file)+get_extension(select_file)); //mac
+				File cpy = new File(src_file.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ; 
+				out.println(cpy.getPath()); //mac
 			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
