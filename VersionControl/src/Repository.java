@@ -21,8 +21,8 @@ public class Repository
 	
 	
 	//class variables
-	Scanner in = new Scanner(System.in);
-	PrintWriter out; 
+	static Scanner in = new Scanner(System.in);
+	private PrintWriter out; 
 	private File src_file, tgt_file ; 
 	
 	/**
@@ -58,9 +58,7 @@ public class Repository
 	 */
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
-//		String source = in.nextLine();
-//		String source = "/Users/narithchoeun/Desktop/source"; //mac
-		String source = "/Users/Alan/Desktop/test_project" ; // Alan's computer
+		String source = in.nextLine();
 		return source;
 	}
 	
@@ -70,9 +68,7 @@ public class Repository
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
-//		String pathname = in.nextLine();
-//		String pathname = "/Users/narithchoeun/Desktop"; //mac
-		String pathname = "/Users/Alan/Desktop" ; // Alan's computer 
+		String pathname = in.nextLine();
 		pathname += "/repo343";//mac
 		
 		File target_dir = new File(pathname);
