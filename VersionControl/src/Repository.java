@@ -15,8 +15,38 @@ public class Repository
 {
 	public static void main(String[] args)
 	{
+		Scanner scan = new Scanner(System.in);
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
+		
+		/* 
+		 * displays message to user which will continue to wait for the user to check in/out or end the program
+		 */
+		int option; 
+		System.out.println("Repo created. Waiting for user to check in, check out, or quit.\n" +
+				"1. Check in\n" + 
+				"2. Check out\n" +
+				"3. Exit\n");
+		
+		option = scan.nextInt();
+		while (option != 3){
+			switch(option){
+			case 1:
+				repo.check_in();
+				break;
+			case 2: 
+				repo.check_out();
+				break;
+			case 3: 
+				System.out.println("Done.");
+				break;
+			}
+			try{
+				Thread.sleep(1000);
+			} catch (InterruptedException e){}
+			option=scan.nextInt();
+		}
+		scan.close();
 	} // end of main
 	
 	
@@ -58,7 +88,8 @@ public class Repository
 	 */
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
-		String source = in.nextLine();
+//		String source = in.nextLine();
+		String source = "/Users/narithchoeun/Desktop/src";
 		return source;
 	}
 	
@@ -68,8 +99,9 @@ public class Repository
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
-		String pathname = in.nextLine();
-		pathname += "/repo343";//mac
+//		String pathname = in.nextLine();
+		String pathname = "/Users/narithchoeun/Desktop";
+		pathname += "/repo343";
 		
 		File target_dir = new File(pathname);
 		return target_dir;
@@ -197,5 +229,19 @@ public class Repository
 		int i = filename.lastIndexOf(".");
 		String ext = filename.substring(i);
 		return ext;
+	}
+	
+	/**
+	 * Checks in the repo updating the manifest if needed
+	 */
+	public void check_in(){
+		System.out.println("Checking in...");
+//		File chkin_file = new File (tgt_file.getPath() +"/" +src_file.getName());
+//		copy_source(chkin_file, tgt_file);
+
+	}
+	
+	public void check_out(){
+		System.out.println("Checking out...");
 	}
 } // end of Repository Project
