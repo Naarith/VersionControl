@@ -23,13 +23,13 @@ public class Repository
 		 * displays message to user which will continue to wait for the user to check in/out or end the program
 		 */
 		int option; 
-		System.out.println("Repo created. Waiting for user to check in, check out, or quit.\n" +
-				"1. Check in\n" + 
-				"2. Check out\n" +
-				"3. Exit\n");
-		
-		option = scan.nextInt();
-		while (option != 3){
+		do{
+			System.out.println("Repo created. Waiting for user to check in, check out, or quit.\n" +
+					"1. Check in\n" + 
+					"2. Check out\n" +
+					"3. Exit\n");
+			
+			option = scan.nextInt();
 			switch(option){
 			case 1:
 				repo.check_in();
@@ -44,8 +44,7 @@ public class Repository
 			try{
 				Thread.sleep(1000);
 			} catch (InterruptedException e){}
-			option=scan.nextInt();
-		}
+		}while (option != 3);
 		scan.close();
 	} // end of main
 	
