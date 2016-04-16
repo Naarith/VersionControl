@@ -35,7 +35,7 @@ public class Repository
 				repo.check_in();
 				break;
 			case 2: 
-				repo.check_out();
+				repo.chk_out();
 				break;
 			case 3: 
 				System.out.println("Done.");
@@ -161,8 +161,9 @@ public class Repository
 			out = new PrintWriter(man_line);
 			out.println("Manifest-Version 1.0");
 			out.println("Created on: " + time) ; 
+//			out.println(src_file.getPath());
 			for(File select_file : src_file.listFiles()){
-				File cpy = new File(src_file.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ; 
+				File cpy = new File(src_file.getPath()+"/"+select_file.getName()+"/"+checksum(select_file)+get_extension(select_file)) ; 
 				out.println(cpy.getPath()); //mac
 			}
 			out.flush();
@@ -240,7 +241,9 @@ public class Repository
 
 	}
 	
-	public void check_out(){
-		System.out.println("Checking out...");
+	public void chk_out(){
+		System.out.println("What version of the project would you like to check out?(mm-dd-yyyy)");
+		String ver = in.nextLine();
+		
 	}
 } // end of Repository Project
