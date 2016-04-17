@@ -1,4 +1,5 @@
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
@@ -35,15 +36,24 @@ public class Repository
 				repo.chkin();
 				break;
 			case 2: 
-				repo.chkout();
+				System.out.println("What version of the project would you like to check out?(mm-dd-yyyy)");
+//				in = new Scanner(System.in);
+				String ver;
+//				ver = in.nextLine();
+				ver = "04-17-2016";
+				System.out.println("Where do you want to store this checkout project?");
+				String dest;
+//				dest = in.nextLine();
+				dest = "/Users/narithchoeun/Desktop/chk";
+				repo.chkout(ver, dest);
 				break;
 			case 3: 
 				System.out.println("Done.");
 				break;
 			}
-			try{
-				Thread.sleep(1000);
-			} catch (InterruptedException e){}
+//			try{
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e){}
 		}while (option != 3);
 		scan.close();
 	} // end of main
@@ -54,6 +64,7 @@ public class Repository
 	private PrintWriter out; 
 	private File src_file, tgt_file, repo; 
 	private String recent_chkin = "";
+	private ArrayList<String> filever = new ArrayList<>();
 	
 	/**
 	 * Initializes the source file for the repository 
@@ -246,7 +257,6 @@ public class Repository
 		/* although in copy_source we use mkdir() calls, when checking in it won't create
  		 * a new directory it will know the folder/file already exists and won't update
 		 * the repository. Any existing files with a different checksum will be added to the repository.
-		 * 
 		 * the man-file will only write the most updated file
 		 */
 		copy_source(src_file, tgt_file);
@@ -257,44 +267,83 @@ public class Repository
 	/**
 	 * check out a version of the repo
 	 */
-	public void chkout(){
-		System.out.println("What version of the project would you like to check out?(mm-dd-yyyy)");
-//		in = new Scanner(System.in);
-		String ver, match;
-//		ver = in.nextLine();
-		ver = "04-16-2016";
-		File dest = new File("/Users/narithchoeun/Desktop/chk");
-		File man_path = new File(repo.getPath()+"/manifest");
+	public void chkout(String ver, String dest){
+		File dest_dir = new File(dest);
+		File man_dir = new File(repo.getPath()+"/manifest");
 		
-		File test = new File("/Users/narithchoeun/Desktop/repo");
 		//creates project tree folder
 		File ptree_dir = new File(dest+"/"+src_file.getName());
 		ptree_dir.mkdir();
+		File repo_src = null;
 		
-		Scanner scan; 
-		for(File sel_file : man_path.listFiles()){
+		Scanner scan;
+		//look through manifest dir and find matching requested version
+		for(File sel_file : man_dir.listFiles()){
 			if(sel_file.isHidden());//do nothing for hidden files
 			else {
 				//if date matches user input, read the file that matches input
-				if (sel_file.getName().substring(0, 10).equals(ver)){
+				if(sel_file.getName().startsWith(ver)){
 					try{
-						in = new Scanner(sel_file);
-						
-						//read man file and grab paths to be copied
-						while(in.hasNextLine()){
-							String path = in.nextLine();
-							if(path.startsWith("/") || path.startsWith("\\")){
-								File man_file = new File(path); //store found file path
-								System.out.println(man_file.getName() + " " + man_file.getPath());
-								scan = new Scanner(man_file);
-								while(scan.hasNextLine()){
-									System.out.println(scan.nextLine());
-								}
-							}
-						}
+						in = new Scanner(sel_file); //assign scanner to read that file
 					} catch(FileNotFoundException e){ e.printStackTrace(); }
-				}	
+					break; //break out if file is found
+				}
 			}
-		}	
+		}
+		
+		
+		//read man file and grab paths to be copied
+		while(in.hasNextLine()){
+			String path = in.nextLine();
+			if(path.startsWith("/") || path.startsWith("\\")){
+				String[] filevar = path.split(" "); //splits line by whitespace
+				File filegrab = new File(filevar[0]);
+				String chksum = filevar[1];
+				
+				//go into repo and find the file to grab
+				for(File tmp : repo.listFiles()){
+					if(tmp.isHidden());
+					else{
+						//if file == name of src dir
+						if(tmp.getName().equals(src_file.getName())){
+							repo_src = new File(tmp.getPath()); //store path
+							break; //break out of for loop
+						} 
+					}
+				}
+				
+				//look through repo's src to find desired file artifact
+				for(File tmp: repo_src.listFiles()){
+					if(filegrab.getName().equals(tmp.getName())){
+						File arti_dir = new File(tmp.getPath());
+												
+						for(File f : arti_dir.listFiles()){
+							if(f.getName().equals(chksum)){
+								try{
+									scan = new Scanner(f);
+									//recreate dir from selected file
+									File cpy_dir = new File(ptree_dir.getPath()+"/"+tmp.getName()); 
+									cpy_dir.mkdir();
+									
+									//write into the created directory with an artifact of the file
+									File write_file = new File(cpy_dir.getPath()+"/"+checksum(f)+get_extension(f)) ;
+									out = new PrintWriter(write_file);
+									
+									//copy repo file to new destination
+									while(scan.hasNextLine()){
+										out.println(scan.nextLine());
+									}
+									scan.close();
+									out.close();
+								} catch (IOException e){ e.printStackTrace(); }
+								break; //once file has been found break out of for loop
+							}
+						} 
+						break; //break out of looking for dir and iterate to next file to copy
+					}
+				}
+			}
+		}
+		
 	}
 } // end of Repository Project
