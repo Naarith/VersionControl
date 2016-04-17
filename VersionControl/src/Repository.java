@@ -52,8 +52,8 @@ public class Repository
 	//class variables
 	static Scanner in = new Scanner(System.in);
 	private PrintWriter out; 
-	private File src_file, tgt_file, repo ; 
-	private String recent_chk_in = "";
+	private File src_file, tgt_file, repo; 
+	private String recent_chkin = "";
 	
 	/**
 	 * Initializes the source file for the repository 
@@ -161,13 +161,15 @@ public class Repository
 		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; // Alan's comp
 		try{
 			out = new PrintWriter(man_line);
-			out.println(time +"\nmom: " + recent_chk_in) ; 
+			out.println(time +"\nmom: " + recent_chkin) ; 
 			for(File select_file : src_file.listFiles()){
 				File cpy = new File(src_file.getPath()+"/"+select_file.getName()+"/"+checksum(select_file)+get_extension(select_file)) ; 
-				out.println(cpy.getPath()); //mac
+				out.println(cpy.getPath()); 
 			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
+		recent_chkin = man_line.getPath();
+		
 	} // end of create_manifest method 
 	
 	/**
@@ -237,6 +239,7 @@ public class Repository
 	 */
 	public void chkin(){
 		System.out.println("Checking in...");
+		
 	}
 	
 	
