@@ -24,7 +24,7 @@ public class Repository
 		 */
 		int option; 
 		do{
-			System.out.println("Repo created. Waiting for user to check in, check out, or quit.\n" +
+			System.out.println("Waiting for user to check in, check out, or quit.\n" +
 					"1. Check in\n" + 
 					"2. Check out\n" +
 					"3. Exit\n");
@@ -114,7 +114,6 @@ public class Repository
 	 * @param target File copied from source 
 	 */
 	public void copy_source(File source, File target){
-		System.out.println("Source file: " + source.getPath() + " is being copied.\n");
 		//creates project tree folder
 		File ptree_dir = new File(target+"/"+source.getName());
 		ptree_dir.mkdir();
@@ -123,6 +122,8 @@ public class Repository
 		/* iterates through the files in the source folder and copies files into target folder */
 		for(File select_file : source.listFiles()){
 			try {
+				if(select_file.isHidden());
+				else {
 				in = new Scanner(select_file); //read the file
 				
 				//file path to create directories that contains the source file's artifacts
@@ -140,6 +141,7 @@ public class Repository
 				
 				out.flush();
 				in.close();
+				}
 			} catch (IOException e) { e.printStackTrace(); } // end of try catch block
 		} // end of for each loop 
 	} // end of copy_source method 
@@ -163,14 +165,16 @@ public class Repository
 			out = new PrintWriter(man_line);
 			out.println(time +"\nmom: " + recent_chkin) ; 
 			for(File select_file : src_file.listFiles()){
-				File cpy = new File(src_file.getPath()+"/"+select_file.getName()+"/"+checksum(select_file)+get_extension(select_file)) ; 
-				out.println(cpy.getPath()); 
+				if(select_file.isHidden());
+				else {
+					File cpy = new File(src_file.getPath()+"/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
+					out.println(cpy.getPath()); 
+				}
 			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
 		recent_chkin = man_line.getPath();
-		
-	} // end of create_manifest method 
+	} // end of create_manifest method
 	
 	/**
 	 * Get the current date and time
@@ -239,7 +243,14 @@ public class Repository
 	 */
 	public void chkin(){
 		System.out.println("Checking in...");
-		
+		/* although in copy_source we use mkdir() calls, when checking in it won't create
+ 		 * a new directory it will know the folder/file already exists and won't update
+		 * the repository. Any existing files with a different checksum will be added to the repository.
+		 * 
+		 * the man-file will only write the most updated file
+		 */
+		copy_source(src_file, tgt_file);
+		create_manifest();
 	}
 	
 	
@@ -284,7 +295,6 @@ public class Repository
 					} catch(FileNotFoundException e){ e.printStackTrace(); }
 				}	
 			}
-		}
-		
+		}	
 	}
 } // end of Repository Project
