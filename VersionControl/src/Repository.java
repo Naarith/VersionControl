@@ -32,10 +32,10 @@ public class Repository
 			option = scan.nextInt();
 			switch(option){
 			case 1:
-				repo.check_in();
+				repo.chkin();
 				break;
 			case 2: 
-				repo.chk_out();
+				repo.chkout();
 				break;
 			case 3: 
 				System.out.println("Done.");
@@ -52,7 +52,8 @@ public class Repository
 	//class variables
 	static Scanner in = new Scanner(System.in);
 	private PrintWriter out; 
-	private File src_file, tgt_file ; 
+	private File src_file, tgt_file, repo ; 
+	private String recent_chk_in = "";
 	
 	/**
 	 * Initializes the source file for the repository 
@@ -68,6 +69,7 @@ public class Repository
 	 */
 	public void create_repo(){
 		tgt_file = get_target();
+		repo = tgt_file; //sets repo to tgt for later use
 		
 		boolean created = tgt_file.mkdir();
 		if(created) 
@@ -159,9 +161,7 @@ public class Repository
 		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; // Alan's comp
 		try{
 			out = new PrintWriter(man_line);
-			out.println("Manifest-Version 1.0");
-			out.println("Created on: " + time) ; 
-//			out.println(src_file.getPath());
+			out.println(time +"\nmom: " + recent_chk_in) ; 
 			for(File select_file : src_file.listFiles()){
 				File cpy = new File(src_file.getPath()+"/"+select_file.getName()+"/"+checksum(select_file)+get_extension(select_file)) ; 
 				out.println(cpy.getPath()); //mac
@@ -231,19 +231,57 @@ public class Repository
 		return ext;
 	}
 	
+	
 	/**
-	 * Checks in the repo updating the manifest if needed
+	 * Checks in the repo, updating the manifest
 	 */
-	public void check_in(){
+	public void chkin(){
 		System.out.println("Checking in...");
-//		File chkin_file = new File (tgt_file.getPath() +"/" +src_file.getName());
-//		copy_source(chkin_file, tgt_file);
-
 	}
 	
-	public void chk_out(){
+	
+	/**
+	 * check out a version of the repo
+	 */
+	public void chkout(){
 		System.out.println("What version of the project would you like to check out?(mm-dd-yyyy)");
-		String ver = in.nextLine();
+//		in = new Scanner(System.in);
+		String ver, match;
+//		ver = in.nextLine();
+		ver = "04-16-2016";
+		File dest = new File("/Users/narithchoeun/Desktop/chk");
+		File man_path = new File(repo.getPath()+"/manifest");
+		
+		File test = new File("/Users/narithchoeun/Desktop/repo");
+		//creates project tree folder
+		File ptree_dir = new File(dest+"/"+src_file.getName());
+		ptree_dir.mkdir();
+		
+		Scanner scan; 
+		for(File sel_file : man_path.listFiles()){
+			if(sel_file.isHidden());//do nothing for hidden files
+			else {
+				//if date matches user input, read the file that matches input
+				if (sel_file.getName().substring(0, 10).equals(ver)){
+					try{
+						in = new Scanner(sel_file);
+						
+						//read man file and grab paths to be copied
+						while(in.hasNextLine()){
+							String path = in.nextLine();
+							if(path.startsWith("/") || path.startsWith("\\")){
+								File man_file = new File(path); //store found file path
+								System.out.println(man_file.getName() + " " + man_file.getPath());
+								scan = new Scanner(man_file);
+								while(scan.hasNextLine()){
+									System.out.println(scan.nextLine());
+								}
+							}
+						}
+					} catch(FileNotFoundException e){ e.printStackTrace(); }
+				}	
+			}
+		}
 		
 	}
 } // end of Repository Project
