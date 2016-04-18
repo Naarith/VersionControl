@@ -127,31 +127,43 @@ public class Repository
 		
 		
 		/* iterates through the files in the source folder and copies files into target folder */
-		for(File select_file : source.listFiles()){
-			try {
-				if(select_file.isHidden());
-				else {
-				in = new Scanner(select_file); //read the file
-				
-				//file path to create directories that contains the source file's artifacts
-				File temp_dir = new File(ptree_dir.getPath()+"/"+select_file.getName()) ; 
-				temp_dir.mkdir();
-				
-				//write into the created directory with an artifact of the file
-				File write_file = new File(temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ;
-				out = new PrintWriter(write_file);
-				
-				//reads src file and copies content into artifact file
-				while(in.hasNextLine()){
-					out.println(in.nextLine());
-				} // end of while loop 
-				
-				out.flush();
-				in.close();
-				}
-			} catch (IOException e) { e.printStackTrace(); } // end of try catch block
-		} // end of for each loop 
+		copyDirectoryContents(source, ptree_dir); 
 	} // end of copy_source method 
+	
+	public void copyDirectoryContents(File f, File tgt)
+	{
+		for(File select_file : f.listFiles())
+		{
+			if(select_file.isDirectory()){
+				File temp = new File(tgt.getPath() + "/" + select_file.getName()); 
+				temp.mkdir(); 
+				copyDirectoryContents(select_file, temp);
+			}
+			else
+				try {
+					if(select_file.isHidden());
+					else {
+					in = new Scanner(select_file); //read the file
+					
+					//file path to create directories that contains the source file's artifacts
+					File temp_dir = new File(tgt.getPath()+"/"+select_file.getName()) ; 
+					temp_dir.mkdir();
+					
+					//write into the created directory with an artifact of the file
+					File write_file = new File(temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ;
+					out = new PrintWriter(write_file);
+					
+					//reads src file and copies content into artifact file
+					while(in.hasNextLine()){
+						out.println(in.nextLine());
+					} // end of while loop 
+					
+					out.flush();
+					in.close();
+					}
+				} catch (IOException e) { e.printStackTrace(); } // end of try catch block
+		}
+	} 
 	
 	/**
 	 * Creates the manifest folder for a directory and generates a man file
