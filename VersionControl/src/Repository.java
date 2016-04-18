@@ -40,7 +40,7 @@ public class Repository
 				in = new Scanner(System.in);
 				String ver;
 //				ver = in.nextLine();
-				ver = "04-17-2016";
+				ver = "04-18-2016";
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
 				dest = in.nextLine();
@@ -297,13 +297,13 @@ public class Repository
 		dest_dir.mkdir();
 		
 		File man_dir = new File(repo.getPath()+"/manifest");
-		
+
 		//creates project tree folder
 		File ptree_dir = new File(dest_dir.getPath()+"/"+src_file.getName());
 		ptree_dir.mkdir();
 		
-		File repo_src = null;
 		Scanner scan;
+		
 		//look through manifest dir and find matching requested version
 		for(File sel_file : man_dir.listFiles()){
 			if(sel_file.isHidden());//do nothing for hidden files
@@ -319,7 +319,6 @@ public class Repository
 			}
 		}
 		
-		
 		//read man file and grab paths to be copied
 		while(in.hasNextLine()){
 			String path = in.nextLine();
@@ -328,51 +327,20 @@ public class Repository
 				File filegrab = new File(filevar[0]);
 				String chksum = filevar[1];
 				
-				//go into repo and find the file to grab
-				for(File tmp : repo.listFiles()){
-					if(tmp.isHidden());
-					else{
-						//if file == name of src dir
-						if(tmp.getName().equals(src_file.getName())){
-							repo_src = new File(tmp.getPath()); //store path
-							break; //break out of for loop
-						} 
+				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
+				try{
+					scan = new Scanner(sel);
+					File output = new File(ptree_dir.getPath()+"/"+filegrab.getName());
+					out = new PrintWriter(output);
+					while(scan.hasNextLine()){
+						out.println(scan.nextLine());
 					}
-				}
-				
-				//look through repo's src to find desired file artifact
-				for(File tmp: repo_src.listFiles()){
-					if(filegrab.getName().equals(tmp.getName())){
-						File arti_dir = new File(tmp.getPath());
-												
-						for(File f : arti_dir.listFiles()){
-							if(f.getName().equals(chksum)){
-								try{
-									scan = new Scanner(f);
-									//recreate dir from selected file
-									File cpy_dir = new File(ptree_dir.getPath()+"/"+tmp.getName()); 
-									cpy_dir.mkdir();
-									
-									//write into the created directory with an artifact of the file
-									File write_file = new File(cpy_dir.getPath()+"/"+f.getName()) ;
-									out = new PrintWriter(write_file);
-									
-									//copy repo file to new destination
-									while(scan.hasNextLine()){
-										out.println(scan.nextLine());
-									}
-									scan.close();
-									out.close();
-								} catch (IOException e){ e.printStackTrace(); }
-								break; //once file has been found break out of for loop
-							}
-						}
-						break; //break out of looking for dir and iterate to next file to copy
-					}
-				}
+					scan.close();
+					out.flush();
+				} catch (IOException e) { e.printStackTrace(); }
 			}
 		}//end of reading man file
 		
-//		create_manifest(ptree_dir, dest_dir);
+		create_manifest(ptree_dir, dest_dir);
 	}
 } // end of Repository Project
