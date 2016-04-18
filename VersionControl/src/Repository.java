@@ -36,11 +36,11 @@ public class Repository
 				repo.chkin();
 				break;
 			case 2: 
-				System.out.println("What version of the project would you like to check out?(mm-dd-yyyy)");
-//				in = new Scanner(System.in);
+				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
+				in = new Scanner(System.in);
 				String ver;
-//				ver = in.nextLine();
-				ver = "04-17-2016";
+				ver = in.nextLine();
+//				ver = "04-17-2016";
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
 //				dest = in.nextLine();
@@ -62,7 +62,7 @@ public class Repository
 	//class variables
 	static Scanner in = new Scanner(System.in);
 	private PrintWriter out; 
-	private File src_file, tgt_file, repo; 
+	private File src_file = null, tgt_file = null, repo = null; 
 	private String recent_chkin = "";
 	private ArrayList<String> filever = new ArrayList<>();
 	
@@ -90,7 +90,7 @@ public class Repository
 		else 
 			System.out.println("Repository was not created.");
 
-		create_manifest() ; 
+		create_manifest(src_file, tgt_file) ; 
 		copy_source(src_file, tgt_file) ; 
 	}
 	
@@ -158,33 +158,36 @@ public class Repository
 	} // end of copy_source method 
 	
 	/**
-	 * Creates the manifest folder for the repository 
-	 * @param source File that was made into a repository
+	 * Creates the manifest folder for a directory and generates a man file
+	 * @param src File that was made into a repository/clone
+	 * @param tgt File that will store the manifest dir
+	 * @param recent String that stores the most recent check in
 	 */
-	public void create_manifest()
+	public void create_manifest(File src, File tgt)
 	{
-		String path = tgt_file.getPath() + "/manifest"; 
+		String path = tgt.getPath() + "/manifest"; 
 
 		File manifest = new File(path) ; 
-		
 		manifest.mkdir() ; 
 		String time = get_timestamp();
 
 		//creates man line file with check in timestamp and the project hierarchy
-		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; // Alan's comp
+		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; 
+		
 		try{
 			out = new PrintWriter(man_line);
 			out.println(time +"\nmom: " + recent_chkin) ; 
-			for(File select_file : src_file.listFiles()){
+			
+			for(File select_file : src.listFiles()){
 				if(select_file.isHidden());
 				else {
-					File cpy = new File(src_file.getPath()+"/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
+					File cpy = new File(src.getPath()+"/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
 					out.println(cpy.getPath()); 
 				}
 			}
 			out.flush();
 		} catch (IOException e) { e.printStackTrace(); }
-		recent_chkin = man_line.getPath();
+		recent_chkin = man_line.getName(); //update class var
 	} // end of create_manifest method
 	
 	/**
@@ -260,7 +263,7 @@ public class Repository
 		 * the man-file will only write the most updated file
 		 */
 		copy_source(src_file, tgt_file);
-		create_manifest();
+		create_manifest(src_file, tgt_file);
 	}
 	
 	
@@ -274,8 +277,8 @@ public class Repository
 		//creates project tree folder
 		File ptree_dir = new File(dest+"/"+src_file.getName());
 		ptree_dir.mkdir();
-		File repo_src = null;
 		
+		File repo_src = null;
 		Scanner scan;
 		//look through manifest dir and find matching requested version
 		for(File sel_file : man_dir.listFiles()){
@@ -285,6 +288,7 @@ public class Repository
 				if(sel_file.getName().startsWith(ver)){
 					try{
 						in = new Scanner(sel_file); //assign scanner to read that file
+						recent_chkin = sel_file.getName();
 					} catch(FileNotFoundException e){ e.printStackTrace(); }
 					break; //break out if file is found
 				}
@@ -326,7 +330,7 @@ public class Repository
 									cpy_dir.mkdir();
 									
 									//write into the created directory with an artifact of the file
-									File write_file = new File(cpy_dir.getPath()+"/"+checksum(f)+get_extension(f)) ;
+									File write_file = new File(cpy_dir.getPath()+"/"+f.getName()) ;
 									out = new PrintWriter(write_file);
 									
 									//copy repo file to new destination
@@ -343,7 +347,8 @@ public class Repository
 					}
 				}
 			}
-		}
+		}//end of reading man file
 		
+		create_manifest(ptree_dir, dest_dir);
 	}
 } // end of Repository Project
