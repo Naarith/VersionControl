@@ -1,5 +1,4 @@
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
@@ -39,12 +38,10 @@ public class Repository
 				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
 				in = new Scanner(System.in);
 				String ver;
-//				ver = in.nextLine();
-				ver = "04-18-2016";
+				ver = in.nextLine();
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
 				dest = in.nextLine();
-//				dest = "/Users/narithchoeun/Desktop/";
 				repo.chkout(ver, dest);
 				break;
 			case 3: 
@@ -350,6 +347,6 @@ public class Repository
 			}
 		}//end of reading man file
 		
-		create_manifest(ptree_dir, dest_dir);
+		create_manifest(ptree_dir, repo);
 	}
 } // end of Repository Project
