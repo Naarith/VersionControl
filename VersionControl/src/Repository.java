@@ -39,21 +39,18 @@ public class Repository
 				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
 				in = new Scanner(System.in);
 				String ver;
-				ver = in.nextLine();
-//				ver = "04-17-2016";
+//				ver = in.nextLine();
+				ver = "04-17-2016";
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
 //				dest = in.nextLine();
-				dest = "/Users/narithchoeun/Desktop/chk";
+				dest = "/Users/narithchoeun/Desktop/";
 				repo.chkout(ver, dest);
 				break;
 			case 3: 
 				System.out.println("Done.");
 				break;
 			}
-//			try{
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e){}
 		}while (option != 3);
 		scan.close();
 	} // end of main
@@ -64,7 +61,6 @@ public class Repository
 	private PrintWriter out; 
 	private File src_file = null, tgt_file = null, repo = null; 
 	private String recent_chkin = "";
-	private ArrayList<String> filever = new ArrayList<>();
 	
 	/**
 	 * Initializes the source file for the repository 
@@ -271,11 +267,13 @@ public class Repository
 	 * check out a version of the repo
 	 */
 	public void chkout(String ver, String dest){
-		File dest_dir = new File(dest);
+		File dest_dir = new File(dest + "/chkout");
+		dest_dir.mkdir();
+		
 		File man_dir = new File(repo.getPath()+"/manifest");
 		
 		//creates project tree folder
-		File ptree_dir = new File(dest+"/"+src_file.getName());
+		File ptree_dir = new File(dest_dir.getPath()+"/"+src_file.getName());
 		ptree_dir.mkdir();
 		
 		File repo_src = null;
@@ -342,13 +340,13 @@ public class Repository
 								} catch (IOException e){ e.printStackTrace(); }
 								break; //once file has been found break out of for loop
 							}
-						} 
+						}
 						break; //break out of looking for dir and iterate to next file to copy
 					}
 				}
 			}
 		}//end of reading man file
 		
-		create_manifest(ptree_dir, dest_dir);
+//		create_manifest(ptree_dir, dest_dir);
 	}
 } // end of Repository Project
