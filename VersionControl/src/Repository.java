@@ -200,7 +200,6 @@ public class Repository
 			{
 				s += "/" + select_file.getName() ; 
 				File sub = new File(s); 
-				out.print(sub.getPath());
 				iterateThroughDirectory(select_file, s);
 			}
 			else
