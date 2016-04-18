@@ -175,17 +175,26 @@ public class Repository
 			out.println(time) ; 
 			out.println("Mom: " + recent_chkin) ; 
 			out.println("@" + src.getParent()); 
-			for(File select_file : src.listFiles()){
-				if(select_file.isHidden());
-				else {
-					File cpy = new File(src.getName() + "/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
-					out.println(cpy.getPath()); 
-				}
-			}
-			out.flush();
+			iterateThroughDirectory(src); 
 		} catch (IOException e) { e.printStackTrace(); }
 		recent_chkin = man_line.getName(); //update class var
 	} // end of create_manifest method
+	
+	public void iterateThroughDirectory(File f)
+	{
+		for(File select_file : f.listFiles())
+		{
+			if(select_file.isDirectory())
+				iterateThroughDirectory(select_file);
+			else
+				if(select_file.isHidden());
+				else {
+					File cpy = new File(f.getName() + "/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
+					out.println(cpy.getPath()); 
+				}
+		}
+		out.flush();
+	} 
 	
 	/**
 	 * Get the current date and time
