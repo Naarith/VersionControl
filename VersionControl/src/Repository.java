@@ -153,6 +153,7 @@ public class Repository
 					File write_file = new File(temp_dir.getPath()+"/"+checksum(select_file)+get_extension(select_file)) ;
 					out = new PrintWriter(write_file);
 					
+					
 					//reads src file and copies content into artifact file
 					while(in.hasNextLine()){
 						out.println(in.nextLine());
@@ -330,7 +331,15 @@ public class Repository
 				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
 				try{
 					scan = new Scanner(sel);
+					String[] outtree = filegrab.getPath().split("/");
+					String line = "";
+					for(int i = 0; i< outtree.length-1; i++){
+						line +="/"+outtree[i];
+						File dir = new File(dest_dir.getPath()+line);
+						dir.mkdir();
+					}
 					File output = new File(ptree_dir.getPath()+"/"+filegrab.getName());
+
 					out = new PrintWriter(output);
 					while(scan.hasNextLine()){
 						out.println(scan.nextLine());
