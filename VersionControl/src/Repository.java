@@ -43,8 +43,8 @@ public class Repository
 				ver = "04-17-2016";
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
-//				dest = in.nextLine();
-				dest = "/Users/narithchoeun/Desktop/";
+				dest = in.nextLine();
+//				dest = "/Users/narithchoeun/Desktop/";
 				repo.chkout(ver, dest);
 				break;
 			case 3: 
@@ -96,8 +96,8 @@ public class Repository
 	 */
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
-//		String source = in.nextLine();
-		String source = "/Users/narithchoeun/Desktop/src";
+		String source = in.nextLine();
+//		String source = "/Users/narithchoeun/Desktop/src";
 		return source;
 	}
 	
@@ -107,8 +107,8 @@ public class Repository
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
-//		String pathname = in.nextLine();
-		String pathname = "/Users/narithchoeun/Desktop";
+		String pathname = in.nextLine();
+//		String pathname = "/Users/narithchoeun/Desktop";
 		pathname += "/repo343";
 		
 		File target_dir = new File(pathname);
@@ -172,12 +172,13 @@ public class Repository
 		
 		try{
 			out = new PrintWriter(man_line);
-			out.println(time +"\nmom: " + recent_chkin) ; 
-			
+			out.println(time) ; 
+			out.println("Mom: " + recent_chkin) ; 
+			out.println("@" + src.getParent()); 
 			for(File select_file : src.listFiles()){
 				if(select_file.isHidden());
 				else {
-					File cpy = new File(src.getPath()+"/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
+					File cpy = new File(src.getName() + "/"+select_file.getName()+" "+checksum(select_file)+get_extension(select_file)) ; 
 					out.println(cpy.getPath()); 
 				}
 			}
