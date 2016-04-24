@@ -20,8 +20,8 @@ public class Repository
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
 		
-		File test = new File("/Users/Alan/Desktop/test_project/test.txt") ; 
-		System.out.println(repo.checksum(test)) ; 
+//		File test = new File("/Users/Alan/Desktop/test_project/test.txt") ; 
+//		System.out.println(repo.checksum(test)) ; 
 		
 		/* 
 		 * displays message to user which will continue to wait for the user to check in/out or end the program
@@ -97,8 +97,8 @@ public class Repository
 	 */
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
-		String source = in.nextLine();
-//		String source = "/Users/narithchoeun/Desktop/src";
+//		String source = in.nextLine();
+		String source = "/Users/narithchoeun/Desktop/src";
 		return source;
 	}
 	
@@ -108,8 +108,8 @@ public class Repository
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
-		String pathname = in.nextLine();
-//		String pathname = "/Users/narithchoeun/Desktop";
+//		String pathname = in.nextLine();
+		String pathname = "/Users/narithchoeun/Desktop";
 		pathname += "/repo343";
 		
 		File target_dir = new File(pathname);
@@ -157,7 +157,7 @@ public class Repository
 					
 					//reads src file and copies content into artifact file
 					while(in.hasNextLine()){
-						out.println(in.nextLine());
+						out.write(in.nextLine());
 					} // end of while loop 
 					
 					out.flush();
@@ -207,8 +207,8 @@ public class Repository
 			else
 				if(select_file.isHidden());
 				else {
-					File cpy = new File(s + "/" + select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
-					out.println(cpy.getPath()); 
+					File cpy = new File(s+"/"+select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
+					out.write(cpy.getPath());
 				}
 		}
 		out.flush();
@@ -316,11 +316,12 @@ public class Repository
 						File dir = new File(dest_dir.getPath()+line);
 						dir.mkdir();
 					}
-					File output = new File(ptree_dir.getPath()+"/"+filegrab.getName());
+					
+					File output = new File(ptree_dir.getPath()+"/"+checksum(sel)+get_extension(sel));
 
 					out = new PrintWriter(output);
 					while(scan.hasNextLine()){
-						out.println(scan.nextLine());
+						out.write(scan.nextLine());
 					}
 					scan.close();
 					out.flush();
