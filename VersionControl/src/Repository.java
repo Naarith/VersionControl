@@ -2,6 +2,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * ask the user to input a source they would like to create a repository for
@@ -18,6 +19,9 @@ public class Repository
 		Scanner scan = new Scanner(System.in);
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
+		
+		File test = new File("/Users/Alan/Desktop/test_project/test.txt") ; 
+		System.out.println(repo.checksum(test)) ; 
 		
 		/* 
 		 * displays message to user which will continue to wait for the user to check in/out or end the program
@@ -221,42 +225,19 @@ public class Repository
 		return formattedDate;
 	}
 	
-	/**
-	 * Calculates the checksum of the file
-	 * @param f File to be read
-	 * @return Checksum of file 
-	 */
-	public int checksum(File f)
+	
+	public byte checksum(File f)
 	{
-		int checksum = 0, c ; 
-		FileReader fr = null ; 
-		Scanner tmpin = null ;
+		char checksum = 0 ; 
 		
-		try{
-			fr = new FileReader(f.getPath()) ; 
-			tmpin = new Scanner(f.getPath()) ; 
-			
-			// reads file character by character 
-			while((c = fr.read()) != -1)
-				checksum += c ; 
-			
-			tmpin.close();
-			fr.close();
-		}catch(FileNotFoundException e)
-		{
-			System.err.println("File not found");
-		}catch(IOException e){}
-		finally{
-			if(tmpin != null)
-				tmpin.close();
-			if(fr != null)
-				try {
-					fr.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} // end of try catch block
-		} // end of try catch finally block
-		return checksum%256 ; 
+		try {
+			for(byte b : Files.readAllBytes(f.toPath()))
+				checksum += b ; 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
+		
+		return (byte)checksum ; 
 	} // end of checksum method 
 	
 	
