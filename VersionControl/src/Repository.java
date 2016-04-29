@@ -191,6 +191,12 @@ public class Repository
 		recent_chkin = man_line.getName(); //update class var
 	} // end of create_manifest method
 	
+	/**
+	 * Allows to iterate through project folder and 
+	 * print file paths to manifest
+	 * @param f File to iterate through 
+	 * @param s File name
+	 */
 	public void iterateThroughDirectory(File f,String s)
 	{
 		for(File select_file : f.listFiles())
@@ -198,18 +204,17 @@ public class Repository
 			if(select_file.isDirectory())
 			{
 				s += "/" + select_file.getName() ; 
-				File sub = new File(s); 
 				iterateThroughDirectory(select_file, s);
-			}
+			} // end of if 
 			else
 				if(select_file.isHidden());
 				else {
 					File cpy = new File(s + "/" + select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
 					out.println(cpy.getPath()); 
-				}
-		}
+				} // end of else 
+		} // end of for each loop 
 		out.flush();
-	} 
+	} // end of iterateThroughDirectory method 
 	
 	/**
 	 * Get the current date and time
@@ -222,7 +227,11 @@ public class Repository
 		return formattedDate;
 	}
 	
-	
+	/**
+	 * Calculates the checksum of a file 
+	 * @param f File to be scanned
+	 * @return checksum byte of a file 
+	 */
 	public byte checksum(File f)
 	{
 		byte checksum = 0; 
