@@ -20,9 +20,6 @@ public class Repository
 		Repository repo = new Repository(get_source());	
 		repo.create_repo();
 		
-		File test = new File("/Users/Alan/Desktop/test_project/test.txt") ; 
-		System.out.println(repo.checksum(test)) ; 
-		
 		/* 
 		 * displays message to user which will continue to wait for the user to check in/out or end the program
 		 */
@@ -228,7 +225,7 @@ public class Repository
 	
 	public byte checksum(File f)
 	{
-		char checksum = 0 ; 
+		byte checksum = 0; 
 		
 		try {
 			for(byte b : Files.readAllBytes(f.toPath()))
@@ -237,7 +234,7 @@ public class Repository
 			e.printStackTrace();
 		}  
 		
-		return (byte)checksum ; 
+		return checksum ; 
 	} // end of checksum method 
 	
 	
