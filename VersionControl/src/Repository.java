@@ -29,7 +29,7 @@ public class Repository
 					"1. Check in\n" + 
 					"2. Check out\n" +
 					"3. Exit\n");
-			
+			System.out.print("Select menu option: "); 
 			option = scan.nextInt();
 			switch(option){
 			case 1:
