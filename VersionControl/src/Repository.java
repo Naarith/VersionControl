@@ -57,7 +57,8 @@ public class Repository
 				
 				System.out.println("What project tree do you want to merge these files to?");
 				String ptree;
-				ptree = in.nextLine();
+//				ptree = in.nextLine();
+				ptree = "/Users/naritchoeun/Desktop/merge";
 				
 				repo.merge(manfile, ptree);
 				break;
@@ -368,17 +369,93 @@ public class Repository
 	 * @param man
 	 * @param ptree
 	 */
-	public void merge(String man, String ptree){
-		//check in a ptree 'src'
-		in = new Scanner(System.in);
-		System.out.println("What is the source path?");
-		
-		String src = in.nextLine();
-		File srcpath = new File(src);
-		System.out.println("What is the target path?");
-		String tgt = in.nextLine();
+	public void merge(String man, String tgt){
+		//store selected man file and target path
+		File mansrc = new File(man);
 		File tgtpath = new File(tgt);
-		System.out.println("Merging...");
+		File ptree_dir = null;
+		String mom = "";
+		
+		System.out.println("Merging...\n");
+		
+		//store path to manifest
+		File man_dir = new File(repo.getPath() + "/manifest");
+		
+		//grab selected manifest file
+		for(File sel_file : man_dir.listFiles()){
+			if(sel_file.isHidden());//do nothing for hidden files
+			else {
+				//if date matches user input, read the file that matches input
+				if(sel_file.getName().startsWith(man)){
+					try{
+						in = new Scanner(sel_file); //assign scanner to read that file
+						recent_chkin = sel_file.getName();
+					} catch(FileNotFoundException e){ e.printStackTrace(); }
+					break; //break out if file is found
+				}
+			}
+		}
+		
+		//read man file 
+		while(in.hasNextLine()){
+			String path = in.nextLine();
+			
+			//store mom file
+			if(path.startsWith("Mom")){
+				System.out.println(path);
+				String[] momsplit = path.split(" ");
+//				mom = momsplit[1];
+				System.out.println(momsplit[0] + " " + momsplit[1]);
+			}
+			
+			//store src path 
+			if(path.startsWith("@")){
+				String[] pathsplit = path.split("@");//split path so it doesn't include @
+				String srcpath = pathsplit[1];
+				System.out.println(srcpath); 
+//				File srcname = new File(srcpath);
+//				
+//				//creates project tree folder
+//				ptree_dir = new File(tgtpath.getPath()+"/"+srcname.getName());
+//				System.out.println(ptree_dir);
+//				ptree_dir.mkdir();
+			}
+			
+
+			
+			
+//			//store file and AID
+//			if(path.startsWith("/") || path.startsWith("\\")){
+//				String[] filevar = path.split(" "); //splits line by whitespace
+//				File filegrab = new File(filevar[0]);
+//				String chksum = filevar[1];
+//				Scanner scan;
+//				
+//				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
+//				//read contents of selected file 
+//				try{
+//					scan = new Scanner(sel);
+//					//recreate the directories to target folder
+//					String[] outtree = filegrab.getPath().split("/");
+//					String line = "";
+//					for(int i = 0; i < outtree.length-1; i++){
+//						line += "/" + outtree[i];
+//						File dir = new File(tgtpath.getPath()+line);
+//						dir.mkdir();
+//					}
+//					
+//					File output = new File(ptree_dir.getPath()+"/"+filegrab.getName());
+//
+//					out = new PrintWriter(output);
+//					while(scan.hasNextLine()){
+//						out.println(scan.nextLine());
+//					}
+//					scan.close();
+//					out.flush();
+//				} catch (IOException e) { e.printStackTrace(); }
+//			}
+		}//end of reading man file
+		
 		//compare each file from src man file to target ptree man file
 		//1. not in target but is in the src go ahead and copy it 
 		//2. same files don't do anything
