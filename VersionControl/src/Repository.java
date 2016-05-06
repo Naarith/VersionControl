@@ -25,10 +25,11 @@ public class Repository
 		 */
 		int option; 
 		do{
-			System.out.println("Waiting for user to check in, check out, or quit.\n" +
+			System.out.println("Waiting for user to check in, check out, merge or quit.\n" +
 					"1. Check in\n" + 
 					"2. Check out\n" +
-					"3. Exit\n");
+					"3. Merge\n" + 
+					"4. Exit\n");
 			System.out.print("Select menu option: "); 
 			option = scan.nextInt();
 			switch(option){
@@ -36,20 +37,35 @@ public class Repository
 				repo.chkin();
 				break;
 			case 2: 
-				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
 				in = new Scanner(System.in);
+				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
 				String ver;
 				ver = in.nextLine();
+				
 				System.out.println("Where do you want to store this checkout project?");
 				String dest;
 				dest = in.nextLine();
+			
 				repo.chkout(ver, dest);
 				break;
 			case 3: 
+				in = new Scanner(System.in);
+				//user selects current man file for the project tree to be merged
+				System.out.println("What manifest file do you want to merge?");
+				String manfile;
+				manfile = in.nextLine();
+				
+				System.out.println("What project tree do you want to merge these files to?");
+				String ptree;
+				ptree = in.nextLine();
+				
+				repo.merge(manfile, ptree);
+				break;
+			case 4: 
 				System.out.println("Done.");
 				break;
 			}
-		}while (option != 3);
+		}while (option != 4);
 		scan.close();
 	} // end of main
 	
@@ -94,8 +110,8 @@ public class Repository
 	 */
 	public static String get_source(){
 		System.out.println("Select the pathname for a source folder");
-		String source = in.nextLine();
-//		String source = "/Users/narithchoeun/Desktop/src";
+//		String source = in.nextLine();
+		String source = "/Users/narithchoeun/Desktop/src";
 		return source;
 	}
 	
@@ -105,8 +121,8 @@ public class Repository
 	 */
 	public File get_target(){
 		System.out.println("Select the pathname a target folder");
-		String pathname = in.nextLine();
-//		String pathname = "/Users/narithchoeun/Desktop";
+//		String pathname = in.nextLine();
+		String pathname = "/Users/narithchoeun/Desktop";
 		pathname += "/repo343";
 		
 		File target_dir = new File(pathname);
@@ -263,14 +279,24 @@ public class Repository
 	 * Checks in the repo, updating the manifest
 	 */
 	public void chkin(){
-		System.out.println("Checking in...");
+		in = new Scanner(System.in);
+		System.out.println("What is the source path?");
+		String src = in.nextLine();
+		File srcpath = new File(src);
+		
+		System.out.println("What is the target path?");
+		String tgt = in.nextLine();
+		File tgtpath = new File(tgt);
+		System.out.println("Checking in...\n");
 		/* although in copy_source we use mkdir() calls, when checking in it won't create
  		 * a new directory it will know the folder/file already exists and won't update
 		 * the repository. Any existing files with a different checksum will be added to the repository.
 		 * the man-file will only write the most updated file
 		 */
-		copy_source(src_file, tgt_file);
-		create_manifest(src_file, tgt_file);
+		
+		
+		copy_source(srcpath, tgtpath);
+		create_manifest(srcpath, tgtpath);
 	}
 	
 	
@@ -335,5 +361,29 @@ public class Repository
 		}//end of reading man file
 		
 		create_manifest(ptree_dir, repo);
+	}
+	
+	/**
+	 * 
+	 * @param man
+	 * @param ptree
+	 */
+	public void merge(String man, String ptree){
+		//check in a ptree 'src'
+		in = new Scanner(System.in);
+		System.out.println("What is the source path?");
+		
+		String src = in.nextLine();
+		File srcpath = new File(src);
+		System.out.println("What is the target path?");
+		String tgt = in.nextLine();
+		File tgtpath = new File(tgt);
+		System.out.println("Merging...");
+		//compare each file from src man file to target ptree man file
+		//1. not in target but is in the src go ahead and copy it 
+		//2. same files don't do anything
+		//3. different files do a 3 way merge MR, MT, MG
+		
+		
 	}
 } // end of Repository Project
