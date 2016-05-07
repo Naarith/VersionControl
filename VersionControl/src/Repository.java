@@ -57,8 +57,8 @@ public class Repository
 				
 				System.out.println("What project tree do you want to merge these files to?");
 				String ptree;
-//				ptree = in.nextLine();
-				ptree = "/Users/naritchoeun/Desktop/merge";
+				ptree = in.nextLine();
+//				ptree = "/Users/naritchoeun/Desktop/merge";
 				
 				repo.merge(manfile, ptree);
 				break;
@@ -76,6 +76,7 @@ public class Repository
 	private PrintWriter out; 
 	private File src_file = null, tgt_file = null, repo = null; 
 	private String recent_chkin = "";
+	private File tgtmani = null, tgtpath = null;
 	
 	/**
 	 * Initializes the source file for the repository 
@@ -199,8 +200,8 @@ public class Repository
 		Scanner scanmom;
 
 		//creates man line file with check in timestamp and the project hierarchy
-		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; 
-		
+		File man_line = new File(manifest.getPath()+"/"+time+".txt");
+		tgtmani = man_line; //store tgt for merging 
 		
 		File currentMom = new File(src.getPath() + "/currentMom.txt");
 		try {
@@ -331,6 +332,15 @@ public class Repository
 		create_manifest(srcpath, repo);
 	}
 	
+	/** Overloaded **
+	 * Checks in the repo, updating the manifest
+	 */
+	public void chkin(File src){
+		System.out.println("Checking in...\n");
+		copy_source(src, repo);
+		create_manifest(src, repo);
+	}
+	
 	
 	/**
 	 * check out a version of the repo
@@ -401,30 +411,26 @@ public class Repository
 	 * @param ptree
 	 */
 	public void merge(String man, String tgt){
-		//store selected man file and target path
-		File mansrc = new File(man);
-		File tgtpath = new File(tgt);
+		//store target path
+		tgtpath = new File(tgt);
 		
 		//"check in" target path, programmer checks in for the user
-		System.out.println("Checking in target path");
-		copy_source(tgtpath, repo);
-		create_manifest(tgtpath, repo);
+		System.out.println("Check in target project tree");
+		chkin(tgtpath);
 		
-		
-		File ptree_dir = null;
-		String mom = "";
 		String srcpath = "";
+		String mom = "";
+		
 		
 		System.out.println("Merging...\n");
-		
-		//store path to manifest
+		//path to repo manifest
 		File man_dir = new File(repo.getPath() + "/manifest");
 		
 		//grab selected manifest file
 		for(File sel_file : man_dir.listFiles()){
 			if(sel_file.isHidden());//do nothing for hidden files
 			else {
-				//if date matches user input, read the file that matches input
+				//if date matches user input, read the file
 				if(sel_file.getName().startsWith(man)){
 					try{
 						in = new Scanner(sel_file); //assign scanner to read that file
@@ -441,20 +447,10 @@ public class Repository
 			
 			//store mom file
 			if(path.startsWith("Mom: ")){
-				System.out.println(path);
 				String[] momsplit = path.split(" ");
 				mom = momsplit[1] + " " + momsplit[2] + " " + momsplit[3];
-//				System.out.println(momsplit[0] + " " + momsplit[1]);
+				System.out.println(mom);
 			}
-			
-			//store src path 
-			if(path.startsWith("@")){
-				String[] pathsplit = path.split("@");//split path so it doesn't include @
-				srcpath = pathsplit[1];
-				System.out.println(srcpath); 
-//				File srcname = new File(srcpath);
-			}
-			
 			
 			//store file and AID
 			if(path.startsWith("/") || path.startsWith("\\")){
@@ -465,29 +461,43 @@ public class Repository
 				
 				//grab file from repo
 				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
-				
+				System.out.println("selected " + sel.getPath());
 				//compare file with target project
-//				chk_dir()
-//				try{
-//					scan = new Scanner(sel);
-//					//recreate the directories to target folder
-//					String[] outtree = filegrab.getPath().split("/");
-//					String line = "";
-//					for(int i = 0; i < outtree.length-1; i++){
-//						line += "/" + outtree[i];
-//						File dir = new File(tgtpath.getPath()+line);
-//						dir.mkdir();
-//					}
-//					
-//					File output = new File(ptree_dir.getPath()+"/"+filegrab.getName());
-//
-//					out = new PrintWriter(output);
-//					while(scan.hasNextLine()){
-//						out.println(scan.nextLine());
-//					}
-//					scan.close();
-//					out.flush();
-//				} catch (IOException e) { e.printStackTrace(); }
+				try {
+					System.out.println("tgtmani " + tgtmani.getPath());
+					Scanner tgtscan = new Scanner(tgtmani);
+					while (tgtscan.hasNextLine()){
+						String tgtpath = tgtscan.nextLine();
+//						System.out.println("tgt " + tgtscan.nextLine());
+//						//store src path 
+//						if(path.startsWith("@")){
+//							String[] pathsplit = path.split("@");//split path so it doesn't include @
+//							srcpath = pathsplit[1]; //save for when recreating manifest file if a merge conflict occurs
+//							System.out.println(srcpath); 
+////							File srcname = new File(srcpath);
+//						}
+//						
+						if(tgtpath.startsWith("/") || tgtpath.startsWith("\\")){
+							String[] filetgt = tgtpath.split(" "); //splits line by whitespace
+							File tgtgrab = new File(filetgt[0]);
+							String tgtchksum = filetgt[1];
+							
+							System.out.println("tgtgrab: " + tgtgrab.getName() + " " + tgtchksum);
+							//if the src and tgt have the same name but different AID, mergeconflict()
+							if(tgtgrab.getName().equals(filegrab.getName()) && !chksum.equals(tgtchksum)){
+								System.out.println("merge conflict");
+								System.out.println("src " + filegrab.getName() + " " + chksum);
+								System.out.println("tgt " + tgtgrab.getName() + " " + tgtchksum);
+							} else {
+								//write tgtgrab to target project tree because the source project tree either doesn't have it or has the same file
+								
+							}
+							
+						}
+					}
+					tgtscan.close();
+				} catch (IOException e) { e.printStackTrace(); }
+				
 			}
 		}//end of reading man file
 		
