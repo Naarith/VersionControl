@@ -203,46 +203,45 @@ public class Repository
 		
 		
 		File currentMom = new File(src.getPath() + "/currentMom.txt");
-		//*NOTE THAT INITIAL MOM FILE MUST BE EMPTY*
-//		if (!recent_chkin.isEmpty()){ 
+		try {
+			currentMom.createNewFile();
+		} catch (IOException e) { e.printStackTrace(); }
+		//*NOTE THAT INITIAL MOM FILE MUST BE EMPTY, when creating repo*
 			
-			//find currentMom and read it
+			//find currentMom
 			for(File sel : src.listFiles()){
 				if (sel.getName().startsWith("currentMom.txt")){
 					readmom = sel;
 					break; //break out of for loop
-				} 
+				}
 			}
 		
-			//store recent check in from currentMom
+			//read currentMom and store recent check in from currentMom
 			try {
 				scanmom = new Scanner(readmom);
 				if(scanmom.hasNextLine()){
 					recent_chkin = scanmom.nextLine();
-					System.out.println("recent " + recent_chkin);
 				}
 			scanmom.close();
 			} catch (IOException e) { e.printStackTrace(); }
-//		}
 		
 		
 		try{
 			out = new PrintWriter(man_line);
-			out.println(time) ; 
-			out.println("Mom: " + recent_chkin) ; 
+			out.println(time);
+			out.println("Mom: " + recent_chkin);
 			out.println("@" + src.getParent()); 
 			iterateThroughDirectory(src, ("/" + src.getName())); 
 		} catch (IOException e) { e.printStackTrace(); }
 		
-		//write to a current mom file 
+		//write to a current mom file with current timestamp
 		try {
 			out = new PrintWriter(currentMom);
 			out.write(man_line.getName());
 			out.flush();
 		}catch (IOException e) { e.printStackTrace(); }
 		
-		if(recent_chkin.isEmpty())
-			recent_chkin = man_line.getName(); //update class variable 
+		recent_chkin = man_line.getName(); //update class variable 
 	} // end of create_manifest method
 	
 	/**
@@ -392,8 +391,6 @@ public class Repository
 				} catch (IOException e) { e.printStackTrace(); }
 			}
 		}//end of reading man file
-		
-		
 		
 		create_manifest(ptree_dir, repo);
 	}
