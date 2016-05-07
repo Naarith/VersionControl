@@ -156,7 +156,7 @@ public class Repository
 			}
 			else
 				try {
-					if(select_file.isHidden());
+					if(select_file.isHidden() || select_file.getName().startsWith("currentMom"));
 					else {
 					in = new Scanner(select_file); //read the file
 					
@@ -171,7 +171,7 @@ public class Repository
 					
 					//reads src file and copies content into artifact file
 					while(in.hasNextLine()){
-						out.println(in.nextLine());
+						out.write(in.nextLine());
 					} // end of while loop 
 					
 					out.flush();
@@ -194,9 +194,37 @@ public class Repository
 		File manifest = new File(path) ; 
 		manifest.mkdir() ; 
 		String time = get_timestamp();
+		
+		File readmom = null;
+		Scanner scanmom;
 
 		//creates man line file with check in timestamp and the project hierarchy
 		File man_line = new File(manifest.getPath()+"/"+time+".txt") ; 
+		
+		
+		File currentMom = new File(src.getPath() + "/currentMom.txt");
+		//*NOTE THAT INITIAL MOM FILE MUST BE EMPTY*
+//		if (!recent_chkin.isEmpty()){ 
+			
+			//find currentMom and read it
+			for(File sel : src.listFiles()){
+				if (sel.getName().startsWith("currentMom.txt")){
+					readmom = sel;
+					break; //break out of for loop
+				} 
+			}
+		
+			//store recent check in from currentMom
+			try {
+				scanmom = new Scanner(readmom);
+				if(scanmom.hasNextLine()){
+					recent_chkin = scanmom.nextLine();
+					System.out.println("recent " + recent_chkin);
+				}
+			scanmom.close();
+			} catch (IOException e) { e.printStackTrace(); }
+//		}
+		
 		
 		try{
 			out = new PrintWriter(man_line);
@@ -205,7 +233,16 @@ public class Repository
 			out.println("@" + src.getParent()); 
 			iterateThroughDirectory(src, ("/" + src.getName())); 
 		} catch (IOException e) { e.printStackTrace(); }
-		recent_chkin = man_line.getName(); //update class var
+		
+		//write to a current mom file 
+		try {
+			out = new PrintWriter(currentMom);
+			out.write(man_line.getName());
+			out.flush();
+		}catch (IOException e) { e.printStackTrace(); }
+		
+		if(recent_chkin.isEmpty())
+			recent_chkin = man_line.getName(); //update class variable 
 	} // end of create_manifest method
 	
 	/**
@@ -224,10 +261,10 @@ public class Repository
 				iterateThroughDirectory(select_file, s);
 			} // end of if 
 			else
-				if(select_file.isHidden());
+				if(select_file.isHidden() || select_file.getName().startsWith("currentMom"));
 				else {
 					File cpy = new File(s + "/" + select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
-					out.println(cpy.getPath()); 
+					out.write(cpy.getPath()); 
 				} // end of else 
 		} // end of for each loop 
 		out.flush();
@@ -285,19 +322,14 @@ public class Repository
 		String src = in.nextLine();
 		File srcpath = new File(src);
 		
-		System.out.println("What is the target path?");
-		String tgt = in.nextLine();
-		File tgtpath = new File(tgt);
 		System.out.println("Checking in...\n");
 		/* although in copy_source we use mkdir() calls, when checking in it won't create
  		 * a new directory it will know the folder/file already exists and won't update
 		 * the repository. Any existing files with a different checksum will be added to the repository.
 		 * the man-file will only write the most updated file
 		 */
-		
-		
-		copy_source(srcpath, tgtpath);
-		create_manifest(srcpath, tgtpath);
+		copy_source(srcpath, repo);
+		create_manifest(srcpath, repo);
 	}
 	
 	
@@ -344,7 +376,7 @@ public class Repository
 					scan = new Scanner(sel);
 					String[] outtree = filegrab.getPath().split("/");
 					String line = "";
-					for(int i = 0; i< outtree.length-1; i++){
+					for(int i = 0; i < outtree.length-1; i++){
 						line +="/"+outtree[i];
 						File dir = new File(dest_dir.getPath()+line);
 						dir.mkdir();
@@ -353,13 +385,15 @@ public class Repository
 
 					out = new PrintWriter(output);
 					while(scan.hasNextLine()){
-						out.println(scan.nextLine());
+						out.write(scan.nextLine());
 					}
 					scan.close();
 					out.flush();
 				} catch (IOException e) { e.printStackTrace(); }
 			}
 		}//end of reading man file
+		
+		
 		
 		create_manifest(ptree_dir, repo);
 	}
@@ -373,8 +407,16 @@ public class Repository
 		//store selected man file and target path
 		File mansrc = new File(man);
 		File tgtpath = new File(tgt);
+		
+		//"check in" target path, programmer checks in for the user
+		System.out.println("Checking in target path");
+		copy_source(tgtpath, repo);
+		create_manifest(tgtpath, repo);
+		
+		
 		File ptree_dir = null;
 		String mom = "";
+		String srcpath = "";
 		
 		System.out.println("Merging...\n");
 		
@@ -401,38 +443,34 @@ public class Repository
 			String path = in.nextLine();
 			
 			//store mom file
-			if(path.startsWith("Mom")){
+			if(path.startsWith("Mom: ")){
 				System.out.println(path);
 				String[] momsplit = path.split(" ");
-//				mom = momsplit[1];
-				System.out.println(momsplit[0] + " " + momsplit[1]);
+				mom = momsplit[1] + " " + momsplit[2] + " " + momsplit[3];
+//				System.out.println(momsplit[0] + " " + momsplit[1]);
 			}
 			
 			//store src path 
 			if(path.startsWith("@")){
 				String[] pathsplit = path.split("@");//split path so it doesn't include @
-				String srcpath = pathsplit[1];
+				srcpath = pathsplit[1];
 				System.out.println(srcpath); 
 //				File srcname = new File(srcpath);
-//				
-//				//creates project tree folder
-//				ptree_dir = new File(tgtpath.getPath()+"/"+srcname.getName());
-//				System.out.println(ptree_dir);
-//				ptree_dir.mkdir();
 			}
 			
-
 			
-			
-//			//store file and AID
-//			if(path.startsWith("/") || path.startsWith("\\")){
-//				String[] filevar = path.split(" "); //splits line by whitespace
-//				File filegrab = new File(filevar[0]);
-//				String chksum = filevar[1];
-//				Scanner scan;
-//				
-//				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
-//				//read contents of selected file 
+			//store file and AID
+			if(path.startsWith("/") || path.startsWith("\\")){
+				String[] filevar = path.split(" "); //splits line by whitespace
+				File filegrab = new File(filevar[0]);
+				String chksum = filevar[1];
+				Scanner scan;
+				
+				//grab file from repo
+				File sel = new File("/"+repo.getPath()+"/"+filegrab.getPath()+"/"+chksum);
+				
+				//compare file with target project
+//				chk_dir()
 //				try{
 //					scan = new Scanner(sel);
 //					//recreate the directories to target folder
@@ -453,14 +491,25 @@ public class Repository
 //					scan.close();
 //					out.flush();
 //				} catch (IOException e) { e.printStackTrace(); }
-//			}
+			}
 		}//end of reading man file
 		
-		//compare each file from src man file to target ptree man file
-		//1. not in target but is in the src go ahead and copy it 
-		//2. same files don't do anything
-		//3. different files do a 3 way merge MR, MT, MG
-		
-		
 	}
+	
+	//checks through a directory
+	public void chk_dir(File f,String s)
+	{
+		for(File select_file : f.listFiles()){
+			if(select_file.isDirectory()){
+				s += "/" + select_file.getName() ;
+				iterateThroughDirectory(select_file, s);
+			} // end of if 
+			else
+				if(select_file.isHidden());
+				else {
+					File cpy = new File(s + "/" + select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
+				} // end of else 
+		} // end of for each loop 
+	} // end of iterateThroughDirectory method 
+	
 } // end of Repository Project
