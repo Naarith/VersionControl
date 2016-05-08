@@ -18,57 +18,62 @@ public class Repository
 	{
 		Scanner scan = new Scanner(System.in);
 		Repository repo = new Repository(get_source());	
-		repo.create_repo();
 		
-		/* 
-		 * displays message to user which will continue to wait for the user to check in/out or end the program
-		 */
-		int option; 
-		do{
-			System.out.println("Waiting for user to check in, check out, merge or quit.\n" +
-					"1. Check in\n" + 
-					"2. Check out\n" +
-					"3. Merge\n" + 
-					"4. Exit\n");
-			System.out.print("Select menu option: "); 
-			option = scan.nextInt();
-			switch(option){
-			case 1:
-				repo.chkin();
-				break;
-			case 2: 
-				in = new Scanner(System.in);
-				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
-				String ver;
-				ver = in.nextLine();
-				
-				System.out.println("Where do you want to store this checkout project?");
-				String dest;
-				dest = in.nextLine();
-			
-				repo.chkout(ver, dest);
-				break;
-			case 3: 
-				in = new Scanner(System.in);
-				//user selects current man file for the project tree to be merged
-				System.out.println("What manifest file do you want to merge?");
-				String manfile;
-				manfile = in.nextLine();
-				
-				System.out.println("What project tree do you want to merge these files to?");
-				String ptree;
-				ptree = in.nextLine();
-//				ptree = "/Users/naritchoeun/Desktop/merge";
-				
-				repo.merge(manfile, ptree);
-				break;
-			case 4: 
-				System.out.println("Done.");
-				break;
-			}
-		}while (option != 4);
-		scan.close();
+		File tgt = new File ("/Users/narithchoeun/Desktop/src");
+		
+		repo.create_repo();
+		repo.merge_conflict(tgt, "h.txt", "-79.txt", "72.txt");
+//		
+//		/* 
+//		 * displays message to user which will continue to wait for the user to check in/out or end the program
+//		 */
+//		int option; 
+//		do{
+//			System.out.println("Waiting for user to check in, check out, merge or quit.\n" +
+//					"1. Check in\n" + 
+//					"2. Check out\n" +
+//					"3. Merge\n" + 
+//					"4. Exit\n");
+//			System.out.print("Select menu option: "); 
+//			option = scan.nextInt();
+//			switch(option){
+//			case 1:
+//				repo.chkin();
+//				break;
+//			case 2: 
+//				in = new Scanner(System.in);
+//				System.out.println("What version of the project would you like to check out?(MM-dd-yyyy h.mm.ss a.txt)");
+//				String ver;
+//				ver = in.nextLine();
+//				
+//				System.out.println("Where do you want to store this checkout project?");
+//				String dest;
+//				dest = in.nextLine();
+//			
+//				repo.chkout(ver, dest);
+//				break;
+//			case 3: 
+//				in = new Scanner(System.in);
+//				//user selects current man file for the project tree to be merged
+//				System.out.println("What manifest file do you want to merge?");
+//				String manfile;
+//				manfile = in.nextLine();
+//				
+//				//user selects project tree to merge to 
+//				System.out.println("What project tree do you want to merge these files to?");
+//				String ptree;
+//				ptree = in.nextLine();
+//				
+//				repo.merge(manfile, ptree);
+//				break;
+//			case 4: 
+//				System.out.println("Done.");
+//				break;
+//			}
+//		}while (option != 4);
+//		scan.close();
 	} // end of main
+	
 	
 	
 	//class variables
@@ -90,7 +95,8 @@ public class Repository
 	/**
 	 * Creates a repository for a new or existing file
 	 */
-	public void create_repo(){
+	public void create_repo()
+	{
 		tgt_file = get_target();
 		repo = tgt_file; //sets repo to tgt for later use
 		
@@ -110,7 +116,8 @@ public class Repository
 	 * Gets the file path from the source file 
 	 * @return source file path 
 	 */
-	public static String get_source(){
+	public static String get_source()
+	{
 		System.out.println("Select the pathname for a source folder");
 //		String source = in.nextLine();
 		String source = "/Users/narithchoeun/Desktop/src";
@@ -121,7 +128,8 @@ public class Repository
 	 * Getting the target folder specified by the user 
 	 * @return target file 
 	 */
-	public File get_target(){
+	public File get_target()
+	{
 		System.out.println("Select the pathname a target folder");
 //		String pathname = in.nextLine();
 		String pathname = "/Users/narithchoeun/Desktop";
@@ -136,7 +144,8 @@ public class Repository
 	 * @param source File to be copied 
 	 * @param target File copied from source 
 	 */
-	public void copy_source(File source, File target){
+	public void copy_source(File source, File target)
+	{
 		//creates project tree folder
 		File ptree_dir = new File(target+"/"+source.getName());
 		ptree_dir.mkdir();
@@ -146,6 +155,11 @@ public class Repository
 		copyDirectoryContents(source, ptree_dir); 
 	} // end of copy_source method 
 	
+	/**
+	 * 
+	 * @param f
+	 * @param tgt
+	 */
 	public void copyDirectoryContents(File f, File tgt)
 	{
 		for(File select_file : f.listFiles())
@@ -274,7 +288,8 @@ public class Repository
 	 * Get the current date and time
 	 * @return A string of the current date and time
 	 */
-	public String get_timestamp(){
+	public String get_timestamp()
+	{
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy h.mm.ss a");
 		String formattedDate = sdf.format(date);
@@ -305,7 +320,8 @@ public class Repository
 	 * Gets the extension for a file by parsing the filename at the last period
 	 * @return A file extension string
 	 */
-	public String get_extension(File f){
+	public String get_extension(File f)
+	{
 		String filename = f.getName();
 		int i = filename.lastIndexOf(".");
 		String ext = filename.substring(i);
@@ -316,7 +332,8 @@ public class Repository
 	/**
 	 * Checks in the repo, updating the manifest
 	 */
-	public void chkin(){
+	public void chkin()
+	{
 		in = new Scanner(System.in);
 		System.out.println("What is the source path?");
 		String src = in.nextLine();
@@ -335,7 +352,8 @@ public class Repository
 	/** Overloaded **
 	 * Checks in the repo, updating the manifest
 	 */
-	public void chkin(File src){
+	public void chkin(File src)
+	{
 		System.out.println("Checking in...\n");
 		copy_source(src, repo);
 		create_manifest(src, repo);
@@ -345,7 +363,8 @@ public class Repository
 	/**
 	 * check out a version of the repo
 	 */
-	public void chkout(String ver, String dest){
+	public void chkout(String ver, String dest)
+	{
 		File dest_dir = new File(dest + "/chkout");
 		dest_dir.mkdir();
 		
@@ -410,7 +429,8 @@ public class Repository
 	 * @param man
 	 * @param ptree
 	 */
-	public void merge(String man, String tgt){
+	public void merge(String man, String tgt)
+	{
 		//store target path
 		tgtpath = new File(tgt);
 		
@@ -467,7 +487,7 @@ public class Repository
 					System.out.println("tgtmani " + tgtmani.getPath());
 					Scanner tgtscan = new Scanner(tgtmani);
 					while (tgtscan.hasNextLine()){
-						String tgtpath = tgtscan.nextLine();
+						String tgtline = tgtscan.nextLine();
 //						System.out.println("tgt " + tgtscan.nextLine());
 //						//store src path 
 //						if(path.startsWith("@")){
@@ -477,8 +497,8 @@ public class Repository
 ////							File srcname = new File(srcpath);
 //						}
 //						
-						if(tgtpath.startsWith("/") || tgtpath.startsWith("\\")){
-							String[] filetgt = tgtpath.split(" "); //splits line by whitespace
+						if(tgtline.startsWith("/") || tgtline.startsWith("\\")){
+							String[] filetgt = tgtline.split(" "); //splits line by whitespace
 							File tgtgrab = new File(filetgt[0]);
 							String tgtchksum = filetgt[1];
 							
@@ -488,35 +508,85 @@ public class Repository
 								System.out.println("merge conflict");
 								System.out.println("src " + filegrab.getName() + " " + chksum);
 								System.out.println("tgt " + tgtgrab.getName() + " " + tgtchksum);
+								
+								//create 3 files to target project tree
+								merge_conflict(tgtpath, filegrab.getName(), chksum, tgtchksum);
 							} else {
 								//write tgtgrab to target project tree because the source project tree either doesn't have it or has the same file
-								
 							}
-							
 						}
 					}
 					tgtscan.close();
 				} catch (IOException e) { e.printStackTrace(); }
-				
 			}
-		}//end of reading man file
+		}//end of reading man file	
+	}//end of merge
+	
+	/**
+	 * 
+	 * @param tgt
+	 * @param conflictfile
+	 * @param src_chksum
+	 * @param tgt_chksum
+	 */
+	public void merge_conflict(File tgt, String conflictfile, String src_chksum, String tgt_chksum){
+		Scanner scan;
 		
+		//look in repo src
+		File src_dir = new File(repo.getPath() +"/"+src_file.getName());
+//		System.out.println(src_dir.getPath());
+		
+		//find mr file in repo
+		String mr = chk_dir(src_dir, conflictfile, src_chksum);
+//		System.out.println("mr " + mr);
+		File mr_file = new File(mr);
+		
+		//find mt file in repo
+		String mt = chk_dir(src_dir, conflictfile, tgt_chksum);
+//		System.out.println("mt " + mt);
+		File mt_file = new File(mt);
+		
+		//rename mr file to tgt project tree
+		File old = new File(tgt.getPath() + "/" + conflictfile);
+		File mr_write = new File(tgt.getPath() + "/" + conflictfile +"_MR" + get_extension(mr_file));
+		old.renameTo(mr_write);
+		
+		//write mt file to tgt project tree
+		try{
+			scan = new Scanner(mt_file);
+			File mt_write = new File(tgt.getPath() + "/" + conflictfile + "_MT" + get_extension(mt_file));
+			out = new PrintWriter(mt_write);
+			while(scan.hasNextLine()){
+				out.write(scan.nextLine());
+			}
+			out.flush();
+			scan.close();
+		} catch (IOException e) { e.printStackTrace(); }
 	}
 	
-	//checks through a directory
-	public void chk_dir(File f,String s)
+	/**
+	 * 
+	 * @param f
+	 * @param chk
+	 * @param chksum
+	 * @return
+	 */
+	public String chk_dir(File f,String chk, String chksum)
 	{
-		for(File select_file : f.listFiles()){
-			if(select_file.isDirectory()){
-				s += "/" + select_file.getName() ;
-				iterateThroughDirectory(select_file, s);
+		for(File select_file : f.listFiles())
+		{
+			if(select_file.isDirectory() && !select_file.getName().equals(chk))
+			{
+				chk_dir(select_file, chk, chksum);
 			} // end of if 
 			else
-				if(select_file.isHidden());
+				if(select_file.isHidden() || select_file.getName().startsWith("currentMom"));
 				else {
-					File cpy = new File(s + "/" + select_file.getName() +" "+checksum(select_file)+get_extension(select_file)) ; 
+					String grab = (f + "/" + select_file.getName() + "/" + chksum);
+					return grab;
 				} // end of else 
 		} // end of for each loop 
+		return ""; //return nothing if not found, shouldn't happen when merge conflict calls it
 	} // end of iterateThroughDirectory method 
 	
 } // end of Repository Project
